@@ -11,6 +11,11 @@ function createWindow () {
   })
 
   mainWindow.loadURL('http://localhost:3000');
+
+  //preload test
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.send('summoner', 'namsewon');
+  })
 }
 
 app.whenReady().then(() => {
