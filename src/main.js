@@ -1,22 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow } = require('electron')
 const path = require('node:path')
-
-function createWindow () {
-  const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
-    }
-  })
-
-  mainWindow.loadURL('http://localhost:3000');
-
-  //preload test
-  mainWindow.webContents.on('did-finish-load', () => {
-    mainWindow.webContents.send('summoner', 'namsewon');
-  })
-}
+const { createWindow } = require('./window')
 
 app.whenReady().then(() => {
   createWindow()
