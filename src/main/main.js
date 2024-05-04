@@ -19,7 +19,7 @@ function createWindow() {
 
   webContents.on('did-finish-load', async () => {
     const [credentials, ws] = await onLeagueClientUx();
-    const league = new League(credentials, ws);
+    const league = new League(credentials, ws, webContents);
     league.subscribes();
   });
 }

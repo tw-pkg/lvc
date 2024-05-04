@@ -26,9 +26,9 @@ class History {
         damage: null,
         cs: null,
         mostChamps: null,
-        odds: null,
-        winCount: null,
-        failCount: null,
+        winningRate: null,
+        totalWin: null,
+        totalFail: null,
         stats: null,
       };
     }
@@ -90,10 +90,10 @@ class History {
       damage: Math.floor(totalDamage / totalGame),
       cs: Math.floor(totalCs / totalGame),
       mostChamps,
-      odds: Math.floor((totalWin / totalGame) * 100),
-      winCount: totalWin,
-      failCount: totalFail,
-      stats,
+      winningRate: Math.floor((totalWin / totalGame) * 100),
+      totalWin,
+      totalFail,
+      stats
     };
   }
 
