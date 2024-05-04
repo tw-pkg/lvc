@@ -3,8 +3,5 @@ const { History } = require("./history")
 
 ipcMain.on('profile-history', async (_, puuid) => {
   const history = await History.fetch(puuid);
-  return {
-    history: history.getStats()
-  }
+  return history.getStats();
 })
-

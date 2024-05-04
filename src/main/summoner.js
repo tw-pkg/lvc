@@ -1,23 +1,20 @@
 const { request } = require('./common')
 
-async function fetchSummoner(credentials) {
-  const data = await request('/lol-chat/v1/me', 'GET', credentials)
-  const summoner = new Summoner(data);
-
-  return {
-    gameName: summoner.gameName,
-    gameTag: summoner.gameTag,
-    id: summoner.id,
-    name: summoner.name,
-    pid: summoner.pid,
-    puuid: summoner.puuid,
-    summonerId: summoner.summonerId,
-    profileImage: summoner.profileImage(),
-    tier: summoner.tier(),
-  }
-}
-
 class Summoner {
+  static async fetch() {
+    return new Promise((resolve, _) => {
+      let interval = setInterval(async () => {
+        const data = await request('/lol-chat/v1/me', 'GET');
+        const summoner = new Summoner(data);
+
+        if(summoner.isFetched()) {
+          clearInterval(interval);
+          resolve(summoner);
+        }
+      }, 1000);
+    });
+  }
+
   constructor(data) {
     this.gameName = data.gameName;
     this.gameTag = data.gameTag;
@@ -29,11 +26,15 @@ class Summoner {
     this.puuid = data.puuid;
   }
 
-  profileImage() {
+  isFetched() {
+    return this.puuid === undefined;
+  }
+
+  getProfileImage() {
     return `https://ddragon-webp.lolmath.net/latest/img/profileicon/${this.icon}.webp`;
   }
 
-  tier() {
+  getTier() {
     const { rankedLeagueDivision, rankedLeagueTier } = this.lol;
     if (!rankedLeagueDivision && !rankedLeagueTier) {
       return 'Unrank';
@@ -58,5 +59,5 @@ class Summoner {
 }
 
 module.exports = {
-  fetchSummoner
+  Summoner
 }

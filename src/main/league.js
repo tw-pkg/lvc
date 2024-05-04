@@ -3,9 +3,13 @@ const {
   createWebSocketConnection, 
   LeagueClient 
 } = require('league-connect');
-const { fetchSummoner } = require('./summoner')
+const { Summoner } = require('./summoner')
 
 let credentials = null
+
+function setCredentials(newCredentials) {
+  credentials = newCredentials
+}
 
 async function onLeagueClientUx() {
   return await Promise.all([
@@ -21,11 +25,12 @@ async function onLeagueClientUx() {
 }
 
 class League {
-  constructor(credentials, ws) {
-    credentials = credentials;
+  constructor(credentials, ws, webContents) {
+    setCredentials(credentials)
     this.ws = ws;
     this.webContents = webContents
     this.#registerListeners();
+    this.#sendClient();
   }
 
   #registerListeners() {
@@ -33,7 +38,7 @@ class League {
     client.start();
 
     client.on('connect', async (newCredentials) => {
-      credentials = newCredentials;
+      setCredentials(newCredentials);
       this.ws = await createWebSocketConnection();
     });
 
@@ -42,11 +47,10 @@ class League {
   }
 
   #sendClient() {
-    fetchSummoner(this.credentials).then(summoner => {
+    Summoner.fetch().then(summoner => {
       const data = {
         ...summoner
       }
-      console.log(data)
       this.webContents.send('on-client', data);
     })
   }

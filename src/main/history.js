@@ -28,9 +28,9 @@ class History {
         damage: null,
         cs: null,
         mostChamps: null,
-        odds: null,
-        winCount: null,
-        failCount: null,
+        winningRate: null,
+        totalWin: null,
+        totalFail: null,
         stats: null,
       }
     }
@@ -79,7 +79,9 @@ class History {
     .reverse()
     .sort((a, b) => a.count - b.count)
     .slice(-3)
-    .map((data) => `https://lolcdn.darkintaqt.com/cdn/champion/${data.champId}/tile`)
+    .map((data) => ({
+      icon: `https://lolcdn.darkintaqt.com/cdn/champion/${data.champId}/tile`
+    }))
     .reverse();
 
     return {
@@ -89,9 +91,9 @@ class History {
       damage: Math.floor(totalDamage / totalGame),
       cs: Math.floor(totalCs / totalGame),
       mostChamps,
-      odds: Math.floor((totalWin / totalGame)*100),
-      winCount: totalWin,
-      failCount: totalFail,
+      winningRate: Math.floor((totalWin / totalGame) * 100),
+      totalWin,
+      totalFail,
       stats
     }
   }
