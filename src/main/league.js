@@ -3,7 +3,7 @@ const {
   createWebSocketConnection, 
   LeagueClient 
 } = require('league-connect');
-const { fetchSummoner } = require('./summoner')
+const { Summoner } = require('./summoner')
 
 let credentials = null
 
