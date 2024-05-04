@@ -1,5 +1,5 @@
 const { authenticate, createWebSocketConnection, LeagueClient } = require('league-connect');
-// const { fetchSummoner } = require('./summoner');
+const { Summoner } = require('./summoner');
 
 let credentials = null;
 
@@ -21,11 +21,12 @@ async function onLeagueClientUx() {
 }
 
 class League {
-  constructor(credentials, ws) {
+  constructor(credentials, ws, webContents) {
     setCredentials(credentials);
     this.ws = ws;
-    // this.webContents = webContents
+    this.webContents = webContents;
     this.#registerListeners();
+    this.#sendClient();
   }
 
   #registerListeners() {
@@ -40,15 +41,14 @@ class League {
     client.on('disconnect', () => {});
   }
 
-  // #sendClient() {
-  //   fetchSummoner(this.credentials).then((summoner) => {
-  //     const data = {
-  //       ...summoner,
-  //     };
-  //     console.log(data);
-  //     this.webContents.send('on-client', data);
-  //   });
-  // }
+  #sendClient() {
+    Summoner.fetch().then((summoner) => {
+      const data = {
+        ...summoner,
+      };
+      this.webContents.send('on-client', data);
+    });
+  }
 
   subscribes() {}
 }

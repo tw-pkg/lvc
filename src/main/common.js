@@ -1,5 +1,5 @@
-const { createHttp1Request } = require('league-connect')
-const { credentials } = require('./league')
+const { createHttp1Request } = require('league-connect');
+const { credentials } = require('./league');
 
 async function request(url, method) {
   try {
@@ -18,5 +18,5 @@ async function request(url, method) {
 }
 
 module.exports = {
-  request
-}
+  request,
+};

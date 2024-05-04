@@ -6,8 +6,8 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 850,
+    width: 800,
+    height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
@@ -19,7 +19,7 @@ function createWindow() {
 
   webContents.on('did-finish-load', async () => {
     const [credentials, ws] = await onLeagueClientUx();
-    const league = new League(credentials, ws);
+    const league = new League(credentials, ws, webContents);
     league.subscribes();
   });
 }

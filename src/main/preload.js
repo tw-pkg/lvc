@@ -1,4 +1,4 @@
-const { contextBridge, ipcRenderer } = require('electron/renderer')
+const { contextBridge, ipcRenderer } = require('electron/renderer');
 
 contextBridge.exposeInMainWorld('ipcRenderer', {
   on: (channel, listener) => ipcRenderer.on(channel, listener),
@@ -10,12 +10,8 @@ contextBridge.exposeInMainWorld('ipcRenderer', {
   invoke: async (channel, ...args) => ipcRenderer.invoke(channel, ...args),
   sendSync: (channel, ...args) => ipcRenderer.sendSync(channel, ...args),
   sendToHost: (channel, ...args) => ipcRenderer.sendToHost(channel, ...args),
-
 });
 
 contextBridge.exposeInMainWorld('reload', () => ipcRenderer.send('ytmd:reload'));
 
-contextBridge.exposeInMainWorld(
-  'ELECTRON_RENDERER_URL',
-  process.env.ELECTRON_RENDERER_URL,
-);
+contextBridge.exposeInMainWorld('ELECTRON_RENDERER_URL', process.env.ELECTRON_RENDERER_URL);
