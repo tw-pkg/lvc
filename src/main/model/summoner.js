@@ -1,4 +1,4 @@
-const { request } = require('./common')
+const { request } = require('../common')
 
 const DIVISION = {
   'I': 1,

@@ -1,6 +1,7 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('node:path');
 const { onLeagueClientUx, League } = require('./league');
+const { Sender } = require('./ipc/sender')
 
 let mainWindow;
 
@@ -16,10 +17,11 @@ function createWindow() {
   mainWindow.loadURL('http://localhost:3000');
 
   const { webContents } = mainWindow;
+  Sender.init(webContents);
 
   webContents.on('did-finish-load', async () => {
-    const [credentials, ws] = await onLeagueClientUx();
-    const league = new League(credentials, ws, webContents);
+    const {credentials, ws} = await onLeagueClientUx();
+    const league = new League(credentials, ws);
     league.subscribes();
   });
 }

@@ -1,5 +1,5 @@
 const { createHttp1Request } = require('league-connect')
-const { credentials } = require('./league')
+const { League } = require('./league')
 
 async function request(url, method) {
   try {
@@ -8,7 +8,7 @@ async function request(url, method) {
         method,
         url,
       },
-      credentials
+      League.credentials
     );
 
     return JSON.parse(response.text());
