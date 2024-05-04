@@ -5,6 +5,8 @@ const {
 } = require('league-connect');
 const { fetchSummoner } = require('./summoner')
 
+let credentials = null
+
 async function onLeagueClientUx() {
   return await Promise.all([
     authenticate({
@@ -19,12 +21,11 @@ async function onLeagueClientUx() {
 }
 
 class League {
-  constructor(credentials, ws, webContents) {
-    this.credentials = credentials;
+  constructor(credentials, ws) {
+    credentials = credentials;
     this.ws = ws;
     this.webContents = webContents
     this.#registerListeners();
-    this.#sendClient();
   }
 
   #registerListeners() {
@@ -32,7 +33,7 @@ class League {
     client.start();
 
     client.on('connect', async (newCredentials) => {
-      this.credentials = newCredentials;
+      credentials = newCredentials;
       this.ws = await createWebSocketConnection();
     });
 
@@ -55,6 +56,7 @@ class League {
 }
 
 module.exports = {
+  credentials,
   onLeagueClientUx,
   League
 }

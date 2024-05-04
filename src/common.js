@@ -1,6 +1,7 @@
 const { createHttp1Request } = require('league-connect')
+const { credentials } = require('./league')
 
-async function request(url, method, credentials) {
+async function request(url, method) {
   try {
     const response = await createHttp1Request(
       {

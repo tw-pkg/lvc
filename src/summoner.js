@@ -27,7 +27,6 @@ class Summoner {
     this.name = data.name;
     this.pid = data.pid;
     this.puuid = data.puuid;
-    this.summonerid = data.summonerid;
   }
 
   profileImage() {
