@@ -1,16 +1,27 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow } = require('electron');
 const path = require('node:path');
+const { onLeagueClientUx, League } = require('./league');
+
+let mainWindow;
 
 function createWindow() {
-  const mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 850,
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
 
   mainWindow.loadURL('http://localhost:3000');
+
+  const { webContents } = mainWindow;
+
+  webContents.on('did-finish-load', async () => {
+    const [credentials, ws] = await onLeagueClientUx();
+    const league = new League(credentials, ws);
+    league.subscribes();
+  });
 }
 
 app.whenReady().then(() => {
