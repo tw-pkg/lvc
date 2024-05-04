@@ -63,7 +63,7 @@ class History {
       totalDamage += participant.stats.totalDamageDealtToChampions;
       totalCs += participant.stats.totalMinionsKilled + participant.stats.neutralMinionsKilled;
 
-      participant.stats.win ? winCount++ : failCount++;
+      participant.stats.win ? totalWin++ : totalFail++;
       totalGame++;
 
       return {
@@ -99,7 +99,7 @@ class History {
 
   #countUsedChampion(champId, recentUsedChampions) {
     let data = recentUsedChampions.get(champId);
-    if (!count) {
+    if (!data.count) {
       const _data = {
         champId,
         count: 1,

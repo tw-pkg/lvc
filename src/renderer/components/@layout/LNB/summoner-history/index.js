@@ -1,63 +1,68 @@
-import { useEffect } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Container, AverageInfo, WinningPercentage, ProgressBar, RecentlyPlayList } from './style';
 
 function SummonerHistory() {
+  const [history, setHistory] = useState(null);
+
   useEffect(() => {
     window.ipcRenderer.invoke('summoner-history').then((history) => {
-      console.log(history);
+      setHistory(history);
     });
   }, []);
+
+  if (!history) return <Fragment></Fragment>;
 
   return (
     <Container>
       <AverageInfo>
         <div id="info-category">
           <p id="name">KDA</p>
-          <p id="value">2/2/2</p>
+          <p id="value">{`${history.kill}/${history.death}/${history.assist}`}</p>
         </div>
         <div id="info-category">
           <p id="name">평균 피해량</p>
-          <p id="value">{23423}</p>
+          <p id="value">{history.damage}</p>
         </div>
         <div id="info-category">
           <p id="name">평균 CS</p>
-          <p id="value">{21937}</p>
+          <p id="value">{history.cs}</p>
         </div>
         <div id="info-category">
           <p id="name">모스트 챔피언</p>
           <div id="most-champ-list">
-            <img src={''} />
-            <img src={''} />
-            <img src={''} />
+            {history.mostChamps.map((champ) => (
+              <img src={champ.icon} />
+            ))}
           </div>
         </div>
       </AverageInfo>
-
       <WinningPercentage>
         <div id="winning-percentage-text">
           <p>승률</p>
-          <p id="value" style={{ color: 50 >= 60 && '#698DE7' }}>
+          <p id="value" style={{ color: history.winningRate >= 60 && '#698DE7' }}>
             {50}%
           </p>
         </div>
         <ProgressBar>
-          <progress value={5} max={10} />
-          <p id="win">{5}W</p>
-          <p id="fail">{5}L</p>
+          <progress value={history.totalWin} max={history.totalWin + history.totalFail} />
+          <p id="win">{history.totalWin}W</p>
+          <p id="fail">{history.totalFail}L</p>
         </ProgressBar>
       </WinningPercentage>
-
       <RecentlyPlayList>
         <div id="category-tag">
           <p>최근 플레이</p>
           <p>킬관여</p>
         </div>
         <div id="game-info">
-          <div id="kda-info">
-            <img src={''} />
-            <div style={{ backgroundColor: true ? '#0F3054' : '#50383b' }}>2/2/2</div>
-          </div>
-          <p id="kill-involvement">30%</p>
+          {history.stats.map((stat, idx) => (
+            <div id="kda-info" key={idx}>
+              <img src={stat.icon} />
+              <div
+                style={{ backgroundColor: stat.isWin ? '#0F3054' : '#50383b' }}
+              >{`${stat.kill}/${stat.death}/${stat.assist}`}</div>
+            </div>
+          ))}
         </div>
         {/* {record.statsList.length === 0 && (
           <div id="none-game-info">

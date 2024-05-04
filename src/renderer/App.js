@@ -8,6 +8,7 @@ function App() {
   return (
     <RecoilRoot>
       <GlobalStyle />
+
       <Layout>
         <Router />
       </Layout>
