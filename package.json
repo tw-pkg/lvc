@@ -18,7 +18,7 @@
     "web-vitals": "^2.1.4"
   },
   "homepage": "./",
-  "main": "src/main.js",
+  "main": "src/main/main.js",
   "scripts": {
     "start:main": "electron .",
     "start:renderer": "react-scripts start",
