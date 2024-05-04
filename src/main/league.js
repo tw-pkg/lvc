@@ -40,21 +40,19 @@ class League {
       this.ws = await createWebSocketConnection();
     });
 
-    client.on('disconnect', () => {
-    });
+    client.on('disconnect', () => {});
   }
 
   #sendClient() {
     Summoner.fetch().then(summoner => {
       Sender.send('on-client', summoner);
-    })
+    });
   }
 
-  subscribes() {
-  }
+  subscribes() {}
 }
 
 module.exports = {
   onLeagueClientUx,
-  League
-}
+  League,
+};

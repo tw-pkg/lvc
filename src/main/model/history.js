@@ -93,7 +93,7 @@ class History {
       winningRate: Math.floor((totalWin / totalGame) * 100),
       totalWin,
       totalFail,
-      stats
+      stats,
     };
   }
 

@@ -18,5 +18,5 @@ async function request(url, method) {
 }
 
 module.exports = {
-  request
-}
+  request,
+};

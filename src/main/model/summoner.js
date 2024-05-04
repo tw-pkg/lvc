@@ -1,12 +1,12 @@
-const { request } = require('../common')
+const { request } = require('../common');
 
 const DIVISION = {
-  'I': 1,
-  'II': 2,
-  'III': 3,
-  'IV': 4,
-  'V': 5
-}
+  I: 1,
+  II: 2,
+  III: 3,
+  IV: 4,
+  V: 5,
+};
 
 class Summoner {
   static async fetch() {
@@ -15,7 +15,7 @@ class Summoner {
         const data = await request('/lol-chat/v1/me', 'GET');
         const summoner = new Summoner(data);
 
-        if(summoner.isFetched()) {
+        if (summoner.isFetched()) {
           clearInterval(interval);
           resolve(summoner);
         }
@@ -45,10 +45,10 @@ class Summoner {
     }
 
     const tier = rankedLeagueTier[0];
-    return tier + DIVISION[rankedLeagueDivision]
+    return tier + DIVISION[rankedLeagueDivision];
   }
 }
 
 module.exports = {
-  Summoner
-}
+  Summoner,
+};
