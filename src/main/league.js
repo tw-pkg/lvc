@@ -25,7 +25,7 @@ async function onLeagueClientUx() {
 }
 
 class League {
-  constructor(credentials, ws) {
+  constructor(credentials, ws, webContents) {
     setCredentials(credentials)
     this.ws = ws;
     this.webContents = webContents
