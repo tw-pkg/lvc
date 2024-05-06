@@ -1,4 +1,4 @@
-class Sender {
+class IpcSender {
   static webContents;
 
   static init(webContents) {
@@ -11,5 +11,5 @@ class Sender {
 }
 
 module.exports = {
-  Sender,
+  IpcSender,
 };

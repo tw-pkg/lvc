@@ -115,5 +115,5 @@ class History {
 }
 
 module.exports = {
-  History,
+  History
 };

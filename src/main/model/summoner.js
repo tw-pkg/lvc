@@ -1,4 +1,5 @@
 const { request } = require('../common');
+const { IpcSender } = require('../ipc/sender')
 
 const DIVISION = {
   I: 1,
@@ -8,21 +9,23 @@ const DIVISION = {
   V: 5,
 };
 
-class Summoner {
-  static async fetch() {
-    return new Promise((resolve, _) => {
-      let interval = setInterval(async () => {
-        const data = await request('/lol-chat/v1/me', 'GET');
-        const summoner = new Summoner(data);
-
-        if (summoner.isFetched()) {
-          clearInterval(interval);
-          resolve(summoner);
-        }
-      }, 1000);
-    });
+async function sendSummoner() {
+  const summoner = await Summoner.fetch();
+  const data = {
+    gameName: summoner.gameName,
+    gameTag: summoner.gameTag,
+    id: summoner.id,
+    name: summoner.name,
+    pid: summoner.pid,
+    puuid: summoner.puuid,
+    profileImage: summoner.getProfileImage(),
+    tier: summoner.getTier(),
   }
+  console.log(data);
+  IpcSender.send('on-client', data);
+}
 
+class Summoner {
   constructor(data) {
     this.gameName = data.gameName;
     this.gameTag = data.gameTag;
@@ -34,6 +37,24 @@ class Summoner {
     this.puuid = data.puuid;
   }
 
+  static async fetch() {
+    return new Promise((resolve, _) => {
+      let interval = setInterval(async () => {
+        const data = await request('/lol-chat/v1/me', 'GET');
+        const summoner = new Summoner(data);
+
+        if (summoner.didFetch()) {
+          clearInterval(interval);
+          resolve(summoner);
+        }
+      }, 1000);
+    });
+  }
+
+  didFetch() {
+    return this.puuid !== undefined;
+  }
+
   getProfileImage() {
     return `https://ddragon-webp.lolmath.net/latest/img/profileicon/${this.icon}.webp`;
   }
@@ -43,12 +64,11 @@ class Summoner {
     if (!rankedLeagueDivision && !rankedLeagueTier) {
       return 'Unrank';
     }
-
-    const tier = rankedLeagueTier[0];
-    return tier + DIVISION[rankedLeagueDivision];
+    return rankedLeagueTier[0] + DIVISION[rankedLeagueDivision];
   }
 }
 
 module.exports = {
-  Summoner,
+  sendSummoner,
+  Summoner
 };
