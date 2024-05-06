@@ -1,5 +1,5 @@
-const { createHttp1Request } = require('league-connect')
-const { League } = require('./league')
+const { createHttp1Request } = require('league-connect');
+const { League } = require('./league');
 
 async function request(url, method) {
   try {
