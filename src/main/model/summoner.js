@@ -1,5 +1,5 @@
 const { request } = require('../common');
-const { IpcSender } = require('../ipc/sender')
+const { IpcSender } = require('../ipc/sender');
 
 const DIVISION = {
   I: 1,
@@ -20,9 +20,9 @@ async function sendSummoner() {
     puuid: summoner.puuid,
     profileImage: summoner.getProfileImage(),
     tier: summoner.getTier(),
-  }
+  };
   console.log(data);
-  IpcSender.send('on-client', data);
+  IpcSender.send('on-league-client', data);
 }
 
 class Summoner {
@@ -70,5 +70,5 @@ class Summoner {
 
 module.exports = {
   sendSummoner,
-  Summoner
+  Summoner,
 };

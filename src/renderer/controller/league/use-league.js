@@ -8,20 +8,21 @@ function useLeague() {
 
   useEffect(() => {
     const onClient = (_, summoner) => {
+      console.log('롤 켜짐');
       setSummoner(summoner);
-      console.log('on-client');
     };
     const offClient = () => {
+      console.log('롤 꺼짐');
       setLeagueStatus('none');
-      console.log('off-client');
+      setSummoner(null);
     };
 
-    // window.ipcRenderer.on('on-legue-client', onClient);
-    // window.ipcRenderer.on('off-legue-client', offClient);
+    window.ipcRenderer.on('on-league-client', onClient);
+    window.ipcRenderer.on('off-league-client', offClient);
 
     return () => {
-      // window.ipcRenderer.removeListener('on-legue-client', onClient);
-      // window.ipcRenderer.removeListener('off-legue-client', offClient);
+      window.ipcRenderer.removeListener('on-league-client', onClient);
+      window.ipcRenderer.removeListener('off-league-client', offClient);
     };
   }, []);
 }
