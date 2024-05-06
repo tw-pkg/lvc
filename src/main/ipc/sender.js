@@ -11,5 +11,5 @@ class Sender {
 }
 
 module.exports = {
-  Sender
-}
+  Sender,
+};

@@ -1,10 +1,6 @@
-const { 
-  authenticate, 
-  createWebSocketConnection, 
-  LeagueClient 
-} = require('league-connect');
+const { authenticate, createWebSocketConnection, LeagueClient } = require('league-connect');
 const { Summoner } = require('./model/summoner');
-const { Sender } = require('./ipc/sender')
+const { Sender } = require('./ipc/sender');
 
 async function onLeagueClientUx() {
   const [credentials, ws] = await Promise.all([
@@ -44,7 +40,7 @@ class League {
   }
 
   #sendClient() {
-    Summoner.fetch().then(summoner => {
+    Summoner.fetch().then((summoner) => {
       Sender.send('on-client', summoner);
     });
   }

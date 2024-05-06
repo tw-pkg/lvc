@@ -1,4 +1,4 @@
-import LNB from './components/@layout/LNB';
+import LNB from './LNB';
 
 function Layout({ children }) {
   return (

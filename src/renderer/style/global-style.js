@@ -89,12 +89,13 @@ video {
 }
 body {
   * {
+    box-sizing: border-box;
+
     img {
       -webkit-user-drag: none;
     }
   }    
 
-  overflow: hidden;
   background-color: #303236;
 
   -webkit-user-select: none;
