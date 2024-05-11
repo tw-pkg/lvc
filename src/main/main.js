@@ -1,26 +1,29 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('node:path');
-const { League } = require('./league');
+const { registerGlobalListeners } = require('./ipc/ipc');
+const { onLeagueClient, League } = require('./league');
 const { IpcSender } = require('./ipc/sender');
-const { sendSummoner } = require('./model/summoner');
-const { register } = require('./ipc/history');
 
-register();
+registerGlobalListeners();
+
+let mainWindow;
 
 function startup() {
-  const mainWindow = createWindow();
+  mainWindow = createMainWindow();
 
   const { webContents } = mainWindow;
   IpcSender.init(webContents);
 
   webContents.on('did-finish-load', async () => {
-    await League.onClientUx();
-    sendSummoner();
-  });
+    onLeagueClient().then(([credentials, ws]) => {
+      const league = new League(credentials, ws);
+      league.sendClient();
+    })
+  })
 }
 
-function createWindow() {
-  const mainWindow = new BrowserWindow({
+function createMainWindow() {
+  const win = new BrowserWindow({
     width: 1400,
     height: 850,
     webPreferences: {
@@ -28,8 +31,8 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadURL('http://localhost:3000');
-  return mainWindow;
+  win.loadURL('http://localhost:3000');
+  return win;
 }
 
 app.whenReady().then(() => {
