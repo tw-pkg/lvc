@@ -1,8 +1,7 @@
-const isDev = require('electron-is-dev');
 const path = require('node:path');
 
 function resolvePath() {
-  if(isDev) {
+  if(process.env.NODE_ENV === undefined || process.env.NODE_ENV === 'development') {
     return 'http://localhost:3000';
   }
   
