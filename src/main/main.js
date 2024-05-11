@@ -3,6 +3,7 @@ const path = require('node:path');
 const { registerGlobalListeners } = require('./ipc/ipc');
 const { onLeagueClient, League } = require('./league');
 const { IpcSender } = require('./ipc/sender');
+const { resolvePath } = require('./common')
 
 let mainWindow;
 
