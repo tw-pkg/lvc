@@ -3,6 +3,9 @@ const path = require('node:path');
 const { League } = require('./league');
 const { IpcSender } = require('./ipc/sender');
 const { sendSummoner } = require('./model/summoner');
+const { register } = require('./ipc/history');
+
+register();
 
 function startup() {
   const mainWindow = createWindow();

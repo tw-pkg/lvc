@@ -4,9 +4,9 @@ export const Container = styled.div`
   display: flex;
   gap: 16px;
 
-  padding: ${({ $clicked }) => $clicked && '16px 0'};
+  padding: ${({ $clicked }) => $clicked && '16px'};
   padding: ${({ $clicked }) => !$clicked && '16px'};
-  margin-top: 26px;
+  margin-top: 20px;
 
   border-radius: 6px;
   background-color: ${({ $clicked }) => !$clicked && '#36373c'};

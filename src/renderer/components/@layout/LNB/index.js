@@ -13,7 +13,6 @@ function LNB() {
   return (
     <Container>
       <Header />
-
       <SummonerProfile
         isOpenHistory={isOpenHistory}
         handleOpenHistory={() => setIsOpenHistory((prev) => !prev)}

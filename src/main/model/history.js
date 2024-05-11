@@ -1,9 +1,10 @@
 const { request } = require('../common');
-const { dayjs } = require('dayjs');
-const relativeTime = require('dayjs/plugin/relativeTime');
-
+const dayjs = require('dayjs');
+require('dayjs/locale/ko');
 dayjs.locale('ko');
+const relativeTime = require('dayjs/plugin/relativeTime');
 dayjs.extend(relativeTime);
+
 const RECENT_PVP_MATCH_COUNT = 10;
 
 class History {
@@ -18,6 +19,7 @@ class History {
   }
 
   getStats() {
+    console.log('len: ', this.matches.length);
     if (this.matches.length === 0) {
       return {
         kill: null,
@@ -48,15 +50,9 @@ class History {
       const kill = participant.stats.kills;
       const death = participant.stats.deaths;
       const assist = participant.stats.assists;
-      const currentDate = new Date(match.gameCreationDate);
-      const hours = match.gameDuration / 3600;
-      const minutes = Math.floor(match.gameDuration / 60);
-      const seconds = match.gameDuration % 60;
-      currentDate.setHours(currentDate.getHours() + hours);
-      currentDate.setMinutes(currentDate.getMinutes() + minutes);
-      currentDate.setSeconds(currentDate.getSeconds() + seconds);
 
       this.#countUsedChampion(participant.championId, recentUsedChampions);
+
       totalKill += kill;
       totalDeath += death;
       totalAssist += assist;
@@ -72,7 +68,7 @@ class History {
         death,
         assist,
         isWin: participant.stats.win,
-        time: dayjs(currentDate.toISOString()).fromNow(),
+        time: this.#getGamePlayTime(match.gameCreationDate, match.gameDuration),
       };
     });
 
@@ -80,7 +76,9 @@ class History {
       .reverse()
       .sort((a, b) => a.count - b.count)
       .slice(-3)
-      .map((data) => `https://lolcdn.darkintaqt.com/cdn/champion/${data.champId}/tile`)
+      .map((data) => ({
+        icon: `https://lolcdn.darkintaqt.com/cdn/champion/${data.champId}/tile`,
+      }))
       .reverse();
 
     return {
@@ -97,9 +95,21 @@ class History {
     };
   }
 
+  #getGamePlayTime(creationDate, duration) {
+    const currentDate = new Date(creationDate);
+    const hours = duration / 3600;
+    const minutes = Math.floor(duration / 60);
+    const seconds = duration % 60;
+    currentDate.setHours(currentDate.getHours() + hours);
+    currentDate.setMinutes(currentDate.getMinutes() + minutes);
+    currentDate.setSeconds(currentDate.getSeconds() + seconds);
+
+    return dayjs(currentDate.toISOString()).fromNow();
+  }
+
   #countUsedChampion(champId, recentUsedChampions) {
     let data = recentUsedChampions.get(champId);
-    if (!data.count) {
+    if (!data) {
       const _data = {
         champId,
         count: 1,
@@ -115,5 +125,5 @@ class History {
 }
 
 module.exports = {
-  History
+  History,
 };

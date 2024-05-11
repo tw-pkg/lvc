@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import { scroll } from './scroll-style';
 
 const GlobalStyle = createGlobalStyle`
 html,
@@ -94,7 +95,8 @@ body {
     img {
       -webkit-user-drag: none;
     }
-  }    
+  }
+  ${scroll};
 
   background-color: #303236;
 

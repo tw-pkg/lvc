@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
 
@@ -12,6 +12,5 @@ export const Container = styled.div`
   height: 100vh;
 
   padding: 20px;
-
   background-color: #2b2d31;
 `;

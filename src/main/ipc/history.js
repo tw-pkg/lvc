@@ -1,7 +1,13 @@
 const { ipcMain } = require('electron');
-const { History } = require('./history');
+const { History } = require('../model/history');
 
-ipcMain.on('profile-history', async (_, puuid) => {
-  const history = await History.fetch(puuid);
-  return history.getStats();
-});
+function register() {
+  ipcMain.handle('summoner-history', async (_, puuid) => {
+    const history = await History.fetch(puuid);
+    return history.getStats();
+  });
+}
+
+module.exports = {
+  register,
+};

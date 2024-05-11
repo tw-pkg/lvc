@@ -1,12 +1,27 @@
 import { Fragment, useEffect, useState } from 'react';
-import { Container, AverageInfo, WinningPercentage, ProgressBar, RecentlyPlayList } from './style';
+import {
+  Container,
+  AverageInfo,
+  WinningPercentage,
+  ProgressBar,
+  RecentlyPlayList,
+  Empty,
+} from './style';
+import { useRecoilValue } from 'recoil';
+import { summonerState } from '../../../../@store/league';
+import { PiWarningCircle } from 'react-icons/pi';
 
 function SummonerHistory() {
+  const summoner = useRecoilValue(summonerState);
+
   const [history, setHistory] = useState(null);
 
   useEffect(() => {
-    window.ipcRenderer.invoke('summoner-history').then((history) => {
+    if (!summoner) return;
+
+    window.ipcRenderer.invoke('summoner-history', summoner.puuid).then((history) => {
       setHistory(history);
+      console.log(history);
     });
   }, []);
 
@@ -30,8 +45,8 @@ function SummonerHistory() {
         <div id="info-category">
           <p id="name">모스트 챔피언</p>
           <div id="most-champ-list">
-            {history.mostChamps.map((champ) => (
-              <img src={champ.icon} />
+            {history.mostChamps.map((champ, i) => (
+              <img src={champ.icon} key={i} />
             ))}
           </div>
         </div>
@@ -40,7 +55,7 @@ function SummonerHistory() {
         <div id="winning-percentage-text">
           <p>승률</p>
           <p id="value" style={{ color: history.winningRate >= 60 && '#698DE7' }}>
-            {50}%
+            {history.winningRate}%
           </p>
         </div>
         <ProgressBar>
@@ -52,24 +67,30 @@ function SummonerHistory() {
       <RecentlyPlayList>
         <div id="category-tag">
           <p>최근 플레이</p>
-          <p>킬관여</p>
         </div>
-        <div id="game-info">
-          {history.stats.map((stat, idx) => (
-            <div id="kda-info" key={idx}>
-              <img src={stat.icon} />
-              <div
-                style={{ backgroundColor: stat.isWin ? '#0F3054' : '#50383b' }}
-              >{`${stat.kill}/${stat.death}/${stat.assist}`}</div>
+        {/* <div id="game-info">
+          {history.stats?.map((stat, idx) => (
+            <div id="play" key={idx}>
+              <div id="kda">
+                <img src={stat.icon} />
+                <div
+                  style={{ backgroundColor: stat.isWin ? '#0F3054' : '#50383b' }}
+                >{`${stat.kill}/${stat.death}/${stat.assist}`}</div>
+              </div>
+              <p id="time">{stat.time}</p>
             </div>
           ))}
-        </div>
-        {/* {record.statsList.length === 0 && (
-          <div id="none-game-info">
-            <img src={warning_icon} />
+        </div> */}
+        {!history.stats && (
+          <Empty>
+            {/* <img src={warning_icon} /> */}
             <p>전적이 없습니다.</p>
-          </div>
-        )} */}
+          </Empty>
+        )}
+        <Empty>
+          <PiWarningCircle />
+          <p>전적이 없습니다.</p>
+        </Empty>
       </RecentlyPlayList>
     </Container>
   );

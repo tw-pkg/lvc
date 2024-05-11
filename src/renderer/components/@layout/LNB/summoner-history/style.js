@@ -5,7 +5,7 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
 
-  margin-top: 15px;
+  margin-top: 4px;
   padding: 20px;
   border-radius: 10px;
 
@@ -109,10 +109,9 @@ export const ProgressBar = styled.div`
 export const RecentlyPlayList = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-
   width: 100%;
-  margin-top: 45px;
+
+  margin-top: 35px;
 
   #category-tag {
     display: flex;
@@ -129,12 +128,16 @@ export const RecentlyPlayList = styled.div`
 
   #game-info {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin: 5px;
+    flex-direction: column;
+    gap: 8px;
 
-    #kda-info {
+    #play {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+    }
+
+    #kda {
       display: flex;
       align-items: center;
 
@@ -154,25 +157,29 @@ export const RecentlyPlayList = styled.div`
       }
     }
 
-    #kill-involvement {
-      font-size: 16px;
-      font-weight: 600;
-      color: #f2f3f5;
+    #time {
+      font-size: 12px;
+      font-weight: 500;
+      color: #7f8189;
     }
   }
+`;
 
-  #none-game-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+export const Empty = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
-    img {
-      width: 27%;
-      height: auto;
-      margin: 17px;
-    }
-    p {
-      font-size: 16.5px;
-    }
+  svg {
+    width: 62px;
+    height: 62px;
+    margin-top: 24px;
+    color: #7f8189;
+  }
+  p {
+    margin: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #7f8189;
   }
 `;
