@@ -1,23 +1,26 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 import { CustomTextArea } from './style';
 
-function MessageInput({ handleSubmit }) {
-  const ref = useRef();
+function MessageInput({ handleSubmit, maxLength }) {
+  const [text, setText] = useState('');
 
-  const handlePressEnter = (e) => {
-    if (!ref.current || e.shiftKey) return;
+  function handlePressEnter(e) {
+    if (e.shiftKey) return;
+    e.preventDefault();
 
-    handleSubmit(e.target.value);
-    ref.current.resizableTextArea.textArea.value = '';
+    setText('');
+    handleSubmit(text.trim());
   };
 
   return (
     <CustomTextArea
-      ref={ref}
       className="message-input"
-      onPressEnter={handlePressEnter}
-      autoSize={{ minRows: 1, maxRows: 4 }}
       placeholder="메세지를 입력해주세요..."
+      autoSize={{ minRows: 1, maxRows: 4 }}
+      maxLength={maxLength}
+      value={text}
+      onChange={(e) => setText(e.target.value)}
+      onPressEnter={handlePressEnter}
     />
   );
 }
