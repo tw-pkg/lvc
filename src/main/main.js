@@ -3,6 +3,7 @@ const path = require('node:path');
 const { registerGlobalListeners } = require('./ipc/ipc');
 const { onLeagueClient, League } = require('./league');
 const { IpcSender } = require('./ipc/sender');
+const { resolvePath } = require('./common') 
 
 registerGlobalListeners();
 
@@ -31,7 +32,7 @@ function createMainWindow() {
     },
   });
 
-  win.loadURL('http://localhost:3000');
+  win.loadURL(resolvePath());
   return win;
 }
 
