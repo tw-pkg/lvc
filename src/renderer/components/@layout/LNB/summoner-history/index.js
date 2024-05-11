@@ -21,7 +21,6 @@ function SummonerHistory() {
 
     window.ipcRenderer.invoke('summoner-history', summoner.puuid).then((history) => {
       setHistory(history);
-      console.log(history);
     });
   }, []);
 
@@ -83,7 +82,7 @@ function SummonerHistory() {
         </div>
         {!history.stats && (
           <Empty>
-            {/* <img src={warning_icon} /> */}
+            <PiWarningCircle />
             <p>전적이 없습니다.</p>
           </Empty>
         )}

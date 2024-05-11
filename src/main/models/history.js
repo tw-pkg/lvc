@@ -1,4 +1,3 @@
-const { request } = require('../common');
 const dayjs = require('dayjs');
 require('dayjs/locale/ko');
 dayjs.locale('ko');
@@ -8,18 +7,11 @@ dayjs.extend(relativeTime);
 const RECENT_PVP_MATCH_COUNT = 10;
 
 class History {
-  static async fetch(puuid) {
-    const history = await request(`/lol-match-history/v1/products/lol/${puuid}/matches`);
-    const matches = history.games.games.filter((match) => match.gameType !== 'CUSTOM_GAME');
-    return new History(matches);
-  }
-
-  constructor(matches) {
-    this.matches = matches;
+  constructor(data) {
+    this.matches = data.games.games.filter(match => match.gameType !== 'CUSTOM_GAME');
   }
 
   getStats() {
-    console.log('len: ', this.matches.length);
     if (this.matches.length === 0) {
       return {
         kill: null,
