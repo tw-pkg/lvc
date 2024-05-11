@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
 const { League } = require('./league');
 const { IpcSender } = require('./ipc/sender');
@@ -21,16 +21,31 @@ function startup() {
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
+    minWidth: 700,
+    minHeight: 500,
     width: 1400,
     height: 850,
+    show: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
     },
   });
 
   mainWindow.loadURL('http://localhost:3000');
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
+
   return mainWindow;
 }
+
+ipcMain.on(IPC_KEY.QUIT_APP, () => {
+  app.quit();
+});
+ipcMain.on(IPC_KEY.CLOSE_APP, () => {
+  mainWindow.minimize();
+});
 
 app.whenReady().then(() => {
   startup();

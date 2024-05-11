@@ -68,7 +68,7 @@ function SummonerHistory() {
         <div id="category-tag">
           <p>최근 플레이</p>
         </div>
-        {/* <div id="game-info">
+        <div id="game-info">
           {history.stats?.map((stat, idx) => (
             <div id="play" key={idx}>
               <div id="kda">
@@ -80,17 +80,13 @@ function SummonerHistory() {
               <p id="time">{stat.time}</p>
             </div>
           ))}
-        </div> */}
+        </div>
         {!history.stats && (
           <Empty>
             {/* <img src={warning_icon} /> */}
             <p>전적이 없습니다.</p>
           </Empty>
         )}
-        <Empty>
-          <PiWarningCircle />
-          <p>전적이 없습니다.</p>
-        </Empty>
       </RecentlyPlayList>
     </Container>
   );

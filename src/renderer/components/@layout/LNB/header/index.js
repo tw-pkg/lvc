@@ -6,10 +6,10 @@ import QUIT_ICON from '../../../../assets/icon/quit_icon.svg';
 function Header() {
   return (
     <Container>
-      <div onClick={() => {}}>
+      <div onClick={() => window.ipcRenderer.send('close')}>
         <img src={CLOSE_ICON} />
       </div>
-      <div onClick={() => {}}>
+      <div onClick={() => window.ipcRenderer.send('quit')}>
         <img src={QUIT_ICON} />
       </div>
     </Container>
