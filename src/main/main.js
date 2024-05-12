@@ -34,13 +34,22 @@ function createMainWindow() {
     },
   });
 
-  mainWindow.loadURL('http://localhost:3000');
+  mainWindow.loadURL(resolvePath());
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
   });
 
   return mainWindow;
+}
+
+function resolvePath() {
+  if(process.env.NODE_ENV === 'production') {
+    //todo: webpack으로 번들링하고 경로 수정해야됨
+    return `file://${path.join(__dirname, '../../build/', 'index.html')}`;
+  }
+
+  return 'http://localhost:3000';
 }
 
 app.whenReady().then(() => {
