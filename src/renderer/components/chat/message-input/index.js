@@ -1,14 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CustomTextArea } from './style';
 
 function MessageInput({ handleSubmit, maxLength }) {
   const [text, setText] = useState('');
+  const [isPressEnter, setIsPressEnter] = useState(false);
 
-  function handlePressEnter(e) {
-    if (e.shiftKey) return;
-    e.preventDefault();
+  useEffect(() => {
+    if (text === '') setIsPressEnter(false);
+  }, [text]);
 
+  function handleKeyDown(e) {
+    if (e.code === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (isPressEnter) return setText('');
+      handlePressEnter(e);
+    }
+  }
+
+  function handlePressEnter() {
     setText('');
+    setIsPressEnter(true);
     handleSubmit(text.trim());
   };
 
@@ -16,11 +27,11 @@ function MessageInput({ handleSubmit, maxLength }) {
     <CustomTextArea
       className="message-input"
       placeholder="메세지를 입력해주세요..."
-      autoSize={{ minRows: 1, maxRows: 4 }}
       maxLength={maxLength}
+      autoSize={{ minRows: 1, maxRows: 4 }}
       value={text}
       onChange={(e) => setText(e.target.value)}
-      onPressEnter={handlePressEnter}
+      onKeyDown={handleKeyDown}
     />
   );
 }

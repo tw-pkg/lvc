@@ -133,7 +133,7 @@ export const RecentlyPlayList = styled.div`
 
     #play {
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       gap: 12px;
     }
 

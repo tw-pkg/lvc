@@ -4,6 +4,7 @@ import styled from 'styled-components';
 export const Container = styled.div`
   display: flex;
   gap: 20px;
+  height: fit-content;
 `;
 
 export const Img = styled.img`

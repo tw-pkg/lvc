@@ -1,18 +1,18 @@
 import React from 'react';
-import { RecoilRoot } from 'recoil';
 import GlobalStyle from './style/global-style';
 import Layout from './components/@layout';
 import Router from './router';
+import Provider from './provider';
 
 function Renderer() {
   return (
-    <RecoilRoot>
+    <Provider>
       <GlobalStyle />
 
       <Layout>
         <Router />
       </Layout>
-    </RecoilRoot>
+    </Provider>
   );
 }
 

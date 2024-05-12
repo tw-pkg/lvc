@@ -6,16 +6,18 @@ import { useRecoilValue } from 'recoil';
 import { createSocket } from '../../../utils/socket';
 import { summonerState } from '../../../@store/league';
 import useScrollTopHandler from '../../../controller/@common/useScrollTopEventHandler';
+import Spinner from '../../@common/spinner';
 
 function GlobalChatRoom() {
   const summoner = useRecoilValue(summonerState);
 
+  const chatSocket = useRef();
+  const [chatEvent, setChatEvent] = useState('init');
+
   const [messages, setMessages] = useState([]);
   const [page, setPage] = useState(0);
   const [isLastPage, setIsLastPage] = useState(false);
-
-  const [chatEvent, setChatEvent] = useState('init');
-  const chatSocket = useRef();
+  const [isLoadingBeforeMessages, setIsLoadingBeforeMessages] = useState(false);
 
   const { scrollRef, onWheel } =
     useScrollTopHandler({
@@ -50,23 +52,35 @@ function GlobalChatRoom() {
 
   useEffect(() => {
     if (chatEvent === 'init') {
-      scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight });
-      return;
+      setTimeout(() => {
+        return scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight });
+      }, 100);
     }
     if (chatEvent === 'new-message') {
-      scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight });
-      return;
+      const sender = messages[messages.length - 1].summoner;
+      const isMyMessage = sender.puuid === summoner?.puuid;
+      const isScrollEnd =
+        scrollRef.current.scrollTop + scrollRef.current.clientHeight >=
+        scrollRef.current.scrollHeight - 100;
+
+      if (isMyMessage || isScrollEnd) {
+        setTimeout(() => {
+          scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight });
+        }, 100);
+      }
     }
   }, [messages]);
 
   function handleRequestBeforeMessages() {
     if (!chatSocket.current) return;
     setPage((prev) => prev + 1);
+    setIsLoadingBeforeMessages(true);
     chatSocket.current.emit('before-messages', { page: page + 1 });
   }
   function handleReceiveBeforeMessages({ isLast, messages }) {
     setChatEvent('before-messages');
     setIsLastPage(isLast);
+    setIsLoadingBeforeMessages(false);
     setMessages((prev) => [...messages, ...prev]);
   }
 
@@ -81,6 +95,10 @@ function GlobalChatRoom() {
 
   return (
     <Container onWheel={onWheel} ref={scrollRef}>
+      {isLoadingBeforeMessages && <div style={{ margin: 8 }}>
+        <Spinner />
+      </div>}
+
       <Messages>
         {messages.map((message, i) => (
           <Message
@@ -92,7 +110,7 @@ function GlobalChatRoom() {
       </Messages>
 
       <MessageInput maxLength={2000} handleSubmit={handleSendMessage} />
-    </Container>
+    </Container >
   );
 }
 

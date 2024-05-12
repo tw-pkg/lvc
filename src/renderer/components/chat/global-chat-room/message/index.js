@@ -12,7 +12,7 @@ function Message({ summoner, text, time }) {
           <RankBadge tier={summoner.tier} />
           <Time>{time}</Time>
         </Wrapper>
-        <Text disabled autoSize value={text} />
+        <Text autoSize disabled value={text} />
       </Flex>
     </Container>
   );
