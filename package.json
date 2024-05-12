@@ -1,6 +1,8 @@
 {
   "name": "lvc",
   "version": "0.1.0",
+  "author": "lvc",
+  "description": "lol-voice-chat desktop app",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -48,6 +50,7 @@
   "devDependencies": {
     "concurrently": "^8.2.2",
     "electron": "^30.0.1",
+    "electron-builder": "^24.13.3",
     "wait-on": "^7.2.0"
   }
 }
