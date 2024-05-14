@@ -33,14 +33,12 @@ class League {
     client.start();
 
     client.on('connect', async (newCredentials) => {
-      console.log('client connect')
       Credentials.init(newCredentials);
       this.ws = await createWebSocketConnection();
-      //todo resubscribe
+      //todo: subscribe 해제했다가 다시 연결
     });
 
     client.on('disconnect', () => {
-      console.log('client disconnect')
       //todo
     })
   }
@@ -65,6 +63,10 @@ class League {
         clearInterval(interval);
       }
     }, 1000);
+  }
+
+  subscribes() {
+    
   }
 }
 

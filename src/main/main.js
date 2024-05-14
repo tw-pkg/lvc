@@ -20,6 +20,7 @@ function startup() {
       console.log('샌드 클라맨!!')
       const league = new League(credentials, ws);
       league.sendClient();
+      league.subscribes();
     })
   })
 }
