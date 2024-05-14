@@ -8,6 +8,7 @@ const { IpcSender } = require('./ipc/sender');
 const { Credentials } = require('./credentials')
 
 async function onLeagueClient() {
+  console.log('testtest')
   return await Promise.all([
     authenticate({
       awaitConnection: true,

@@ -3,6 +3,7 @@ const path = require('node:path');
 const { registerGlobalListeners } = require('./ipc/ipc');
 const { onLeagueClient, League } = require('./league');
 const { IpcSender } = require('./ipc/sender');
+const { autoUpdater } = require("electron-updater");
 
 let mainWindow;
 
@@ -16,6 +17,7 @@ function startup() {
 
   webContents.on('did-finish-load', async () => {
     onLeagueClient().then(([credentials, ws]) => {
+      console.log('샌드 클라맨!!')
       const league = new League(credentials, ws);
       league.sendClient();
     })
@@ -34,7 +36,11 @@ function createMainWindow() {
     },
   });
 
-  mainWindow.loadURL(resolvePath());
+  mainWindow.loadURL(
+    process.env.NODE_ENV === 'production'
+      ? `file://${path.join(__dirname, '../index.html')}`
+      : 'http://localhost:3000'
+  );
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
@@ -43,21 +49,30 @@ function createMainWindow() {
   return mainWindow;
 }
 
-function resolvePath() {
-  if(process.env.NODE_ENV === 'production') {
-    //todo: webpack으로 번들링하고 경로 수정해야됨
-    return `file://${path.join(__dirname, '../../build/', 'index.html')}`;
-  }
-
-  return 'http://localhost:3000';
-}
-
 app.whenReady().then(() => {
   startup();
 
   app.on('activate', function () {
     if (BrowserWindow.getAllWindows().length === 0) startup();
   });
+
+  const version = app.getVersion();
+  console.log('버전', version);
+
+  autoUpdater.checkForUpdates();
+});
+
+
+// 현재 app version
+// const version = app.getVersion();
+// 일렉트론 앱 종료 후 최신 버전으로 다시 설치
+// autoUpdater.quitAndInstall();
+
+autoUpdater.on("update-available", () => {
+  console.log("update_available");
+});
+autoUpdater.on("update-downloaded", () => {
+  console.log("update_downloaded");
 });
 
 app.on('window-all-closed', function () {

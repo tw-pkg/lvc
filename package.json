@@ -1,32 +1,42 @@
 {
   "name": "lvc",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "lol-voice-chat desktop app",
   "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "antd": "^5.16.5",
-    "dayjs": "^1.11.11",
-    "electron-is-dev": "^3.0.1",
-    "league-connect": "^6.0.0-rc12",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-icons": "^5.2.0",
-    "react-router-dom": "^6.23.0",
-    "react-scripts": "5.0.1",
-    "recoil": "^0.7.7",
-    "socket.io-client": "^4.7.5",
-    "styled-components": "^6.1.9",
-    "web-vitals": "^2.1.4"
-  },
   "homepage": "./",
   "main": "src/main/main.js",
   "scripts": {
     "start:main": "electron .",
     "start:renderer": "react-scripts start",
-    "start": "concurrently \"npm run start:renderer\" \"wait-on http://localhost:3000 && npm run start:main\""
+    "start": "concurrently \"npm run start:renderer\" \"wait-on http://localhost:3000 && npm run start:main\"",
+    "build": "react-scripts build && cp -r src/main build",
+    "deploy": "npm run build && electron-builder build -c.extraMetadata.main=build/main/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tw-pkg/lvc.git"
+  },
+  "build": {
+    "extends": null,
+    "productName": "lvc",
+    "appId": "com.lvc-app",
+    "asar": true,
+    "asarUnpack": "**\\*.{node}",
+    "files": [
+      "build/**/*",
+      "node_modules/**/*"
+    ],
+    "directories": {
+      "buildResources": "src/renderer/assets"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "lvc",
+      "repo": "lvc",
+      "private": true,
+      "releaseType": "release",
+      "token": "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"
+    }
   },
   "eslintConfig": {
     "extends": [
@@ -46,9 +56,28 @@
       "last 1 safari version"
     ]
   },
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "antd": "^5.16.5",
+    "dayjs": "^1.11.11",
+    "electron-updater": "^6.1.8",
+    "league-connect": "^6.0.0-rc12",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.2.0",
+    "react-router-dom": "^6.23.0",
+    "react-scripts": "5.0.1",
+    "recoil": "^0.7.7",
+    "socket.io-client": "^4.7.5",
+    "styled-components": "^6.1.9",
+    "web-vitals": "^2.1.4"
+  },
   "devDependencies": {
     "concurrently": "^8.2.2",
     "electron": "^30.0.1",
-    "wait-on": "^7.2.0"
+    "wait-on": "^7.2.0",
+    "electron-builder": "^24.13.3"
   }
 }

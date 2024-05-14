@@ -1,6 +1,6 @@
 const { ipcMain, app } = require('electron');
 const { History } = require('../models/history');
-const { Credentials } = require('../credentials')
+const { Credentials } = require('../credentials');
 
 function registerGlobalListeners(mainWindow) {
   ipcMain.on('quit', () => {
