@@ -18,6 +18,7 @@ function startup() {
     onLeagueClient().then(([credentials, ws]) => {
       const league = new League(credentials, ws);
       league.sendClient();
+      league.subscribes();
     })
   })
 }
@@ -45,7 +46,6 @@ function createMainWindow() {
 
 function resolvePath() {
   if(process.env.NODE_ENV === 'production') {
-    //todo: webpack으로 번들링하고 경로 수정해야됨
     return `file://${path.join(__dirname, '../../build/', 'index.html')}`;
   }
 
