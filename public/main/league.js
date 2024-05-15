@@ -8,7 +8,6 @@ const { IpcSender } = require('./ipc/sender');
 const { Credentials } = require('./credentials')
 
 async function onLeagueClient() {
-  console.log('testtest')
   return await Promise.all([
     authenticate({
       awaitConnection: true,
@@ -26,6 +25,8 @@ class League {
     Credentials.init(credentials);
     this.ws = ws;
     this.#registerListener(credentials);
+    this.#sendClient();
+    this.#handlePhase();
   }
 
   #registerListener(credentials) {
@@ -33,19 +34,15 @@ class League {
     client.start();
 
     client.on('connect', async (newCredentials) => {
-      console.log('client connect')
       Credentials.init(newCredentials);
       this.ws = await createWebSocketConnection();
-      //todo resubscribe
     });
 
     client.on('disconnect', () => {
-      console.log('client disconnect')
-      //todo
     })
   }
 
-  async sendClient() {
+  async #sendClient() {
     let interval = setInterval(async () => {
       const data = await Credentials.request('/lol-chat/v1/me', 'GET');
       const summoner = new Summoner(data);
@@ -65,6 +62,14 @@ class League {
         clearInterval(interval);
       }
     }, 1000);
+  }
+
+  async #handlePhase() {
+
+  }
+
+  async subscribes() {
+    
   }
 }
 
