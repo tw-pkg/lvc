@@ -4,12 +4,12 @@
   "description": "lol-voice-chat desktop app",
   "private": true,
   "homepage": "./",
-  "main": "src/main/main.js",
+  "main": "public/main/main.js",
   "scripts": {
     "start:main": "electron .",
     "start:renderer": "react-scripts start",
     "start": "concurrently \"npm run start:renderer\" \"wait-on http://localhost:3000 && npm run start:main\"",
-    "build": "react-scripts build && cp -r src/main build",
+    "build": "react-scripts build",
     "deploy": "npm run build && electron-builder build -c.extraMetadata.main=build/main/main.js"
   },
   "repository": {
@@ -77,7 +77,7 @@
   "devDependencies": {
     "concurrently": "^8.2.2",
     "electron": "^30.0.1",
-    "wait-on": "^7.2.0",
-    "electron-builder": "^24.13.3"
+    "electron-builder": "^24.13.3",
+    "wait-on": "^7.2.0"
   }
 }
