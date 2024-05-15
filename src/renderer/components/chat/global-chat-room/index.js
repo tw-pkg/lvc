@@ -58,12 +58,12 @@ function GlobalChatRoom() {
     }
     if (chatEvent === 'new-message') {
       const sender = messages[messages.length - 1].summoner;
-      const isMyMessage = sender.puuid === summoner?.puuid;
+      const isMine = sender.puuid === summoner?.puuid;
       const isScrollEnd =
         scrollRef.current.scrollTop + scrollRef.current.clientHeight >=
         scrollRef.current.scrollHeight - 100;
 
-      if (isMyMessage || isScrollEnd) {
+      if (isMine || isScrollEnd) {
         setTimeout(() => {
           scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight });
         }, 100);

@@ -18,6 +18,7 @@ function startup() {
   webContents.on('did-finish-load', async () => {
     onLeagueClient().then(([credentials, ws]) => {
       const league = new League(credentials, ws);
+      league.sendClient();
       league.subscribes();
     })
   })
