@@ -17,9 +17,8 @@ function startup() {
 
   webContents.on('did-finish-load', async () => {
     onLeagueClient().then(([credentials, ws]) => {
-      console.log('샌드 클라맨!!')
       const league = new League(credentials, ws);
-      league.sendClient();
+      league.subscribes();
     })
   })
 }
@@ -37,7 +36,7 @@ function createMainWindow() {
   });
 
   mainWindow.loadURL(
-    process.env.NODE_ENV === 'production'
+    app.isPackaged
       ? `file://${path.join(__dirname, '../index.html')}`
       : 'http://localhost:3000'
   );

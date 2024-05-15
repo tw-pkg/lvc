@@ -5,10 +5,10 @@ const {
 } = require('league-connect');
 const { Summoner } = require('./models/summoner');
 const { IpcSender } = require('./ipc/sender');
-const { Credentials } = require('./credentials')
+const { Credentials } = require('./credentials');
+const handler = require('./handler')
 
 async function onLeagueClient() {
-  console.log('testtest')
   return await Promise.all([
     authenticate({
       awaitConnection: true,
@@ -26,6 +26,8 @@ class League {
     Credentials.init(credentials);
     this.ws = ws;
     this.#registerListener(credentials);
+    this.#sendClient();
+    // this.#handlePhase();
   }
 
   #registerListener(credentials) {
@@ -33,19 +35,17 @@ class League {
     client.start();
 
     client.on('connect', async (newCredentials) => {
-      console.log('client connect')
       Credentials.init(newCredentials);
       this.ws = await createWebSocketConnection();
-      //todo resubscribe
+      //todo: subscribe 해제했다가 다시 연결
     });
 
     client.on('disconnect', () => {
-      console.log('client disconnect')
       //todo
     })
   }
 
-  async sendClient() {
+  async #sendClient() {
     let interval = setInterval(async () => {
       const data = await Credentials.request('/lol-chat/v1/me', 'GET');
       const summoner = new Summoner(data);
@@ -65,6 +65,26 @@ class League {
         clearInterval(interval);
       }
     }, 1000);
+  }
+
+  async #handlePhase() {
+    const data = await Credentials.request('/lol-gameflow/v1/session', 'GET');
+    const { phase, gameData } = data;
+
+    if(phase === 'InProgress') {
+      const { teamOne } = gameData;
+      handler.joinTeamVoice(teamOne);
+    }
+  }
+
+  subscribes() {
+    // this.ws.subscribe('/lol-gameflow/v1/session', (data) => {
+    //   const { phase, gameData } = data;
+
+    //   if(phase === 'InProgress') {
+    //     //팀보이스 참가
+    //   }
+    // })
   }
 }
 
