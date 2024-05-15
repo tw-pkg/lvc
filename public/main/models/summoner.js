@@ -24,10 +24,14 @@ class Summoner {
 
   getTier() {
     const { rankedLeagueDivision, rankedLeagueTier } = this.lol;
-    
-    if (!rankedLeagueDivision && !rankedLeagueTier) {
-      return 'Unrank';
-    }
+    return this.#isUnrank() ? 'Unrank' : this.#getRank(rankedLeagueTier) 
+  }
+
+  #isUnrank(rankedLeagueDivision, rankedLeagueTier) {
+    return !rankedLeagueDivision && !rankedLeagueTier
+  }
+
+  #getRank(rankedLeagueTier) {
     return rankedLeagueTier[0] + DIVISION[rankedLeagueDivision];
   }
 }
