@@ -35,17 +35,20 @@ function createMainWindow() {
     },
   });
 
-  mainWindow.loadURL(
-    app.isPackaged
-      ? `file://${path.join(__dirname, '../index.html')}`
-      : 'http://localhost:3000'
-  );
+  mainWindow.loadURL(resolvePath());
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
   });
 
   return mainWindow;
+}
+
+function resolvePath() {
+  if(app.isPackaged) {
+    return `file://${path.join(__dirname, '../index.html')}`;
+  }
+  return 'http://localhost:3000'
 }
 
 app.whenReady().then(() => {
