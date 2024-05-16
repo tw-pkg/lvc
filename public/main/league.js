@@ -6,7 +6,7 @@ const {
 const { Summoner } = require('./models/summoner');
 const { IpcSender } = require('./ipc/sender');
 const { Credentials } = require('./credentials')
-
+ 
 async function onLeagueClient() {
   return await Promise.all([
     authenticate({
