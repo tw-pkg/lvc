@@ -6,6 +6,7 @@ function registerGlobalListeners(mainWindow) {
   ipcMain.on('quit', () => {
     app.quit();
   });
+  
   ipcMain.on('close', () => {
     mainWindow.minimize();
   });
