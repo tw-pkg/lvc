@@ -53,7 +53,7 @@ function resolvePath() {
   if(app.isPackaged) {
     return `file://${path.join(__dirname, '../index.html')}`;
   }
-  return 'http://localhost:3000'
+  return 'http://localhost:3000';
 }
 
 app.on('ready', () => {
