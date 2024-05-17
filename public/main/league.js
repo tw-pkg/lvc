@@ -24,6 +24,8 @@ class League {
   constructor(credentials, ws) {
     Credentials.init(credentials);
     this.ws = ws;
+    this.summoner = null;
+    this.gameStarted = false;
     this.#registerListener(credentials);
     this.#sendClient();
     this.#handlePhase();
@@ -36,6 +38,9 @@ class League {
     client.on('connect', async (newCredentials) => {
       Credentials.init(newCredentials);
       this.ws = await createWebSocketConnection();
+      this.gameStarted = false;
+      this.#initClient();
+      this.#handlePhase();
     });
 
     client.on('disconnect', () => {
@@ -65,7 +70,17 @@ class League {
   }
 
   async #handlePhase() {
+    this.ws.subscribe('/lol-gameflow/v1/session', (data) => {
+      const { phase, gameData } = data;
 
+      if(phase === 'InProgress' && !this.gameStarted) {
+        this.gameStarted = true;
+
+        const { teamOne } = gameData;
+        const { puuid } = teamOne.find(member => member.puuid === this.summoner.puuid);
+        IpcSender.send('start-game', puuid);
+      }
+    });
   }
 
   async subscribes() {
