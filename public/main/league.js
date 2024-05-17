@@ -47,12 +47,14 @@ class League {
     })
   }
 
-  async #sendClient() {
+  async #initClient() {
     let interval = setInterval(async () => {
       const data = await Credentials.request('/lol-chat/v1/me', 'GET');
       const summoner = new Summoner(data);
 
       if (summoner.gameName !== '') {
+        this.summoner = summoner;
+
         const client = {
           gameName: summoner.gameName,
           gameTag: summoner.gameTag,
