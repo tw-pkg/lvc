@@ -19,8 +19,13 @@ function startup() {
     onLeagueClient().then(([credentials, ws]) => {
       const league = new League(credentials, ws);
       league.subscribes();
-    })
-  })
+    });
+  });
+
+  const version = app.getVersion();
+  console.log('버전', version);
+
+  autoUpdater.checkForUpdates();
 }
 
 function createMainWindow() {
@@ -51,19 +56,15 @@ function resolvePath() {
   return 'http://localhost:3000'
 }
 
-app.whenReady().then(() => {
+app.on('ready', () => {
   startup();
-
-  app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) startup();
-  });
-
-  const version = app.getVersion();
-  console.log('버전', version);
-
-  autoUpdater.checkForUpdates();
 });
 
+app.on('activate', () => {
+  if(BrowserWindow.getAllWindows().length === 0) {
+    startup();
+  }
+})
 
 // 현재 app version
 // const version = app.getVersion();
@@ -78,5 +79,7 @@ autoUpdater.on("update-downloaded", () => {
 });
 
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit();
+  if(process.platform !== 'darwin') {
+    app.quit();
+  }
 });
