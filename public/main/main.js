@@ -17,7 +17,7 @@ function startup() {
   IpcSender.init(webContents);
 
   webContents.on('did-finish-load', async () => {
-    const { ws, summoner} = await onLeagueClient();
+    const { ws, summoner } = await onLeagueClient();
     handle(ws, summoner);
   });
 
