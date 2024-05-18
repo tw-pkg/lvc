@@ -18,8 +18,8 @@ class Member {
 
     return {
       puuid: this.puuid,
-      profileIconId: this.profileIconId,
-      summonerName: this.summonerName,
+      profileImage: `https://ddragon-webp.lolmath.net/latest/img/profileicon/${this.profileIconId}.webp`,
+      name: this.summonerName,
       stats: history.getStats()
     }
   }
