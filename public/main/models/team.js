@@ -9,6 +9,10 @@ class Team {
     return team.map(Member.create);
   }
 
+  hasSummoner(puuid) {
+    return this.members.find(member => member.puuid === puuid);
+  }
+
   createVoiceRoomId() {
     return this.members.map(member => member.puuid).sort().join('').toString();
   }

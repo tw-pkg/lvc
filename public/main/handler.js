@@ -13,8 +13,12 @@ async function handle(ws, summoner) {
     if (phase === 'InProgress' && !inProgressed) {
       inProgressed = true;
 
-      const { teamOne } = gameData;
-      const team = new Team(teamOne);
+      const { teamOne, teamTwo } = gameData;
+
+      let team = new Team(teamOne);
+      if(!team.hasSummoner(summoner.puuid)) {
+        team = new Team(teamTwo);
+      }
 
       IpcSender.send('matched-normal-game', {
         roomId: team.createVoiceRoomId(),
@@ -38,8 +42,12 @@ async function initPhase(summoner) {
   if(phase && phase === 'InProgress') {
     inProgressed = true;
 
-    const { teamOne } = gameData;
-    const team = new Team(teamOne);
+    const { teamOne, teamTwo } = gameData;
+
+    let team = new Team(teamOne);
+    if(!team.hasSummoner(summoner.puuid)) {
+      team = new Team(teamTwo);
+    }
 
     IpcSender.send('matched-normal-game', {
       roomId: team.createVoiceRoomId(),
