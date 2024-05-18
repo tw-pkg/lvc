@@ -13,7 +13,7 @@ class Member {
   }
 
   async getStats() {
-    const data = await Credentials.request(`/lol-match-history/v1/products/lol/${this.puuid}/matches`, 'GET')
+    const data = await Credentials.request(`/lol-match-history/v1/products/lol/${this.puuid}/matches?begIndex=0&endIndex=50`, 'GET')
     const history = new History(data);
 
     return {

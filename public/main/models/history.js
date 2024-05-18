@@ -38,40 +38,37 @@ class History {
     let totalGame = 0;
 
     const stats = this.matches.slice(0, RECENT_PVP_MATCH_COUNT).map((match) => {
-      const participant = match.participants[0];
-      const kill = participant.stats.kills;
-      const death = participant.stats.deaths;
-      const assist = participant.stats.assists;
+      const { participants, gameCreationDate, gameDuration } = match;
+      const { stats, championId } = participants[0];
+      const {
+        kills,
+        deaths,
+        assists,
+        totalDamageDealtToChampions,
+        totalMinionsKilled,
+        neutralMinionsKilled,
+        win
+      } = stats;
 
-      this.#countUsedChampion(participant.championId, recentUsedChampions);
+      this.#countUsedChampion(championId, recentUsedChampions);
 
-      totalKill += kill;
-      totalDeath += death;
-      totalAssist += assist;
-      totalDamage += participant.stats.totalDamageDealtToChampions;
-      totalCs += participant.stats.totalMinionsKilled + participant.stats.neutralMinionsKilled;
-
-      participant.stats.win ? totalWin++ : totalFail++;
-      totalGame++;
+      totalKill += kills;
+      totalDeath += deaths;
+      totalAssist += assists;
+      totalDamage += totalDamageDealtToChampions;
+      totalCs += totalMinionsKilled + neutralMinionsKilled;
+      win ? totalWin++ : totalFail++;
+      totalGame += 1;
 
       return {
-        icon: `https://lolcdn.darkintaqt.com/cdn/champion/${participant.championId}/tile`,
-        kill,
-        death,
-        assist,
-        isWin: participant.stats.win,
-        time: this.#getGamePlayTime(match.gameCreationDate, match.gameDuration),
+        icon: `https://lolcdn.darkintaqt.com/cdn/champion/${championId}/tile`,
+        kill: kills,
+        death: deaths,
+        assist: assists,
+        isWin: win,
+        time: this.#getGamePlayTime(gameCreationDate, gameDuration),
       };
     });
-
-    const mostChamps = Array.from(recentUsedChampions.values())
-      .reverse()
-      .sort((a, b) => a.count - b.count)
-      .slice(-3)
-      .map((data) => ({
-        icon: `https://lolcdn.darkintaqt.com/cdn/champion/${data.champId}/tile`,
-      }))
-      .reverse();
 
     return {
       kill: Math.floor(totalKill / totalGame),
@@ -79,7 +76,7 @@ class History {
       assist: Math.floor(totalAssist / totalGame),
       damage: Math.floor(totalDamage / totalGame),
       cs: Math.floor(totalCs / totalGame),
-      mostChamps,
+      mostChamps: this.#getMostChamps(recentUsedChampions),
       winningRate: Math.floor((totalWin / totalGame) * 100),
       totalWin,
       totalFail,
@@ -89,29 +86,37 @@ class History {
 
   #getGamePlayTime(creationDate, duration) {
     const currentDate = new Date(creationDate);
-    const hours = duration / 3600;
-    const minutes = Math.floor(duration / 60);
-    const seconds = duration % 60;
-    currentDate.setHours(currentDate.getHours() + hours);
-    currentDate.setMinutes(currentDate.getMinutes() + minutes);
-    currentDate.setSeconds(currentDate.getSeconds() + seconds);
+    currentDate.setHours(currentDate.getHours() + duration / 3600);
+    currentDate.setMinutes(currentDate.getMinutes() + Math.floor(duration / 60));
+    currentDate.setSeconds(currentDate.getSeconds() + duration % 60);
 
     return dayjs(currentDate.toISOString()).fromNow();
   }
 
   #countUsedChampion(champId, recentUsedChampions) {
-    let data = recentUsedChampions.get(champId);
-    if (!data) {
-      const _data = {
-        champId,
-        count: 1,
-      };
-      recentUsedChampions.set(champId, _data);
+    let champ = recentUsedChampions.get(champId);
+
+    if(champ) {
+      champ.count++;
+      recentUsedChampions.set(champId, champ);
       return;
     }
 
-    data.count++;
-    recentUsedChampions.set(champId, data);
+    recentUsedChampions.set(champId, {
+      champId,
+      count: 1
+    });
+  }
+
+  #getMostChamps(recentUsedChampions) {
+    return Array.from(recentUsedChampions.values())
+      .reverse()
+      .sort((a, b) => a.count - b.count)
+      .slice(-3)
+      .map((champ) => ({
+        icon: `https://lolcdn.darkintaqt.com/cdn/champion/${champ.champId}/tile`,
+      }))
+      .reverse();
   }
 }
 

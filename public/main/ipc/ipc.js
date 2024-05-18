@@ -12,7 +12,7 @@ function registerGlobalListeners(mainWindow) {
   });
 
   ipcMain.handle('summoner-history', async (_, puuid) => {
-    const data = await Credentials.request(`/lol-match-history/v1/products/lol/${puuid}/matches?begIndex=0&endIndex=100`, 'GET')
+    const data = await Credentials.request(`/lol-match-history/v1/products/lol/${puuid}/matches?begIndex=0&endIndex=50`, 'GET')
     const history = new History(data);
     return history.getStats();
   });
