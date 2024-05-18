@@ -22,6 +22,7 @@ function useLeague() {
       setSummoner(null);
     };
     function matchedNormalGame(_, { roomId, puuid, summoners }) {
+      console.log(summoners);
       setLeagueStatus('loading');
       setNormalGameRoomId(roomId);
       setMyTeamSummoners(summoners.map((summoner) => {

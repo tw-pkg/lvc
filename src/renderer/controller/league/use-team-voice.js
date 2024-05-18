@@ -15,7 +15,7 @@ function useTeamVoice() {
     setMyTeamSummoners((prev) =>
       prev ? [...prev.map((summoner) => {
         if (summoner.puuid === puuid) {
-          summoner.isShow = true;
+          return { ...summoner, isShow: true };
         }
         return summoner;
       })] : null);
@@ -25,7 +25,7 @@ function useTeamVoice() {
     setMyTeamSummoners((prev) =>
       prev ? [...prev.map((summoner) => {
         if (summoner.puuid === puuid) {
-          summoner.isShow = false;
+          return { ...summoner, isShow: false };
         }
         return summoner;
       })] : null);
