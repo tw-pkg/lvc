@@ -4,5 +4,6 @@ export const PATH = {
     MEDIA: process.env.REACT_APP_MEDIA_SERVER_URL,
   },
 
-  MAIN: '',
+  GLOBAL_CHAT: '',
+  TEAM_VOICE_ROOM: '/team-voice-room',
 };

@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { leagueStatusState, myTeamSummonersState, normalGameRoomIdState, summonerState } from '../../@store/league';
+import { useNavigate } from 'react-router-dom';
+import { PATH } from '../../constants/path';
 
 function useLeague() {
   const [leagueStatus, setLeagueStatus] = useRecoilState(leagueStatusState);
@@ -8,6 +10,8 @@ function useLeague() {
   const [myTeamSummoners, setMyTeamSummoners] = useRecoilState(myTeamSummonersState);
 
   const [noramlGameRoomId, setNormalGameRoomId] = useRecoilState(normalGameRoomIdState);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     function onClient(_, summoner) {
@@ -17,13 +21,13 @@ function useLeague() {
       setLeagueStatus('none');
       setSummoner(null);
     };
-    function matchedNormalGame(_, { roomId, summoners }) {
+    function matchedNormalGame(_, { roomId, puuid, summoners }) {
       setLeagueStatus('loading');
       setNormalGameRoomId(roomId);
-      setMyTeamSummoners([...summoners.map((teamSummoner) => {
-        teamSummoner.isShow = teamSummoner.puuid === summoner.puuid;
-        return teamSummoner;
-      })]);
+      setMyTeamSummoners(summoners.map((summoner) => {
+        const isShow = summoner.puuid === puuid;
+        return { ...summoner, isShow };
+      }));
     }
 
     /* 롤 클라이언트 켜짐 */
@@ -36,9 +40,17 @@ function useLeague() {
     return () => {
       window.ipcRenderer.removeListener('on-league-client', onClient);
       window.ipcRenderer.removeListener('off-league-client', offClient);
-      window.ipcRenderer.removeListener('team-join-room', offClient);
+      window.ipcRenderer.removeListener('matched-normal-game', matchedNormalGame);
     };
   }, []);
+
+  useEffect(() => {
+    if (leagueStatus === 'loading') {
+      navigate(PATH.TEAM_VOICE_ROOM);
+    }
+  }, [leagueStatus]);
+
+  console.log(leagueStatus, myTeamSummoners);
 }
 
 export default useLeague;

@@ -7,7 +7,7 @@ function useTeamVoice() {
   const setLeagueStatus = useSetRecoilState(leagueStatusState);
   const summoner = useRecoilValue(summonerState);
   const setMyTeamSummoners = useSetRecoilState(myTeamSummonersState);
-  const noramlGameRoomId = useRecoilValue(normalGameRoomIdState);
+  const normalGameRoomId = useRecoilValue(normalGameRoomIdState);
 
   const { connect } = useVoiceChat({ newConsumerCallback: joinTeamSummoner });
 
@@ -40,13 +40,15 @@ function useTeamVoice() {
 
     socket.emit(
       'team-join-room',
-      { roomId: noramlGameRoomId, puuid: summoner.puuid },
+      { roomId: normalGameRoomId, puuid: summoner.puuid },
       ({ rtpCapabilities }) => {
-        const voiceChat = connect({
+        const params = {
           socket: socket,
           stream: stream,
           rtpCapabilities: rtpCapabilities,
-        });
+          roomId: normalGameRoomId,
+        };
+        const voiceChat = connect(params);
 
         disconnectAll = voiceChat.disconnectAll;
         closeConsumer = voiceChat.closeConsumer;

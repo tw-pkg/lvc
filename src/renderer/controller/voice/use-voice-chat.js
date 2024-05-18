@@ -2,15 +2,15 @@ import * as mediasoup from 'mediasoup-client';
 import { useSetRecoilState } from 'recoil';
 import { userStreamState } from '../../@store/voice';
 
-function getSummonerAudio(summonerId) {
-  return document.getElementById(summonerId.toString() + 'audio');
+function getSummonerAudio(summonerPuuid) {
+  return document.getElementById(summonerPuuid + 'audio');
 };
 
 function useVoiceChat({ newConsumerCallback }) {
   const setUserStream = useSetRecoilState(userStreamState);
 
   function connect(params) {
-    const { socket, stream, rtpCapabilities } = params;
+    const { socket, stream, rtpCapabilities, roomId } = params;
 
     let device = new mediasoup.Device();
     let producerTransport = null;
@@ -22,14 +22,14 @@ function useVoiceChat({ newConsumerCallback }) {
       .catch((err) => console.log('디바이스 로드 에러', err));
 
     function createSendTransport(audioTrack) {
-      socket.emit('create-producer-transport', (params) => {
+      socket.emit('create-producer-transport', { roomId }, (params) => {
         if (!device) return;
 
         producerTransport = device.createSendTransport(params);
 
         producerTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
           try {
-            socket.emit('transport-connect', dtlsParameters);
+            socket.emit('transport-connect', { roomId, dtlsParameters });
             callback();
           } catch (err) {
             errback(err);
@@ -37,7 +37,7 @@ function useVoiceChat({ newConsumerCallback }) {
         });
         producerTransport.on('produce', ({ kind, rtpParameters }, callback, errback) => {
           try {
-            socket.emit('transport-produce', { kind, rtpParameters },
+            socket.emit('transport-produce', { roomId, kind, rtpParameters },
               (producer) => {
                 if (producer.producersExist) {
                   getProducers();
@@ -71,7 +71,7 @@ function useVoiceChat({ newConsumerCallback }) {
     });
 
     function getProducers() {
-      socket.emit('get-producers', (producers) => {
+      socket.emit('get-producers', { roomId }, (producers) => {
         producers.forEach((producer) => {
           signalNewConsumerTransport(producer.id, producer.puuid);
         });
@@ -81,7 +81,7 @@ function useVoiceChat({ newConsumerCallback }) {
     function signalNewConsumerTransport(remoteProducerId, newSummonerPuuid) {
       newConsumerCallback(newSummonerPuuid);
 
-      socket.emit('create-consumer-transport', remoteProducerId);
+      socket.emit('create-consumer-transport', { roomId, remoteProducerId });
       socket.on('complete-create-consumer-transport', (params) => {
         if (!device) return;
 
@@ -90,6 +90,7 @@ function useVoiceChat({ newConsumerCallback }) {
         consumerTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
           try {
             socket.emit('transport-recv-connect', {
+              roomId,
               dtlsParameters,
               remoteProducerId,
             });
@@ -108,6 +109,7 @@ function useVoiceChat({ newConsumerCallback }) {
 
       socket.emit('consume',
         {
+          roomId,
           rtpCapabilities: device.rtpCapabilities,
           remoteProducerId,
         },
@@ -127,7 +129,7 @@ function useVoiceChat({ newConsumerCallback }) {
           const newSummoner = getSummonerAudio(newSummonerPuuid);
           newSummoner.srcObject = new MediaStream([consumer.track]);
 
-          socket.emit('consumer-resume', remoteProducerId);
+          socket.emit('consumer-resume', { roomId, remoteProducerId });
         }
       );
     };
