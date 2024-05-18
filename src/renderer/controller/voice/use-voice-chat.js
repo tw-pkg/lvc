@@ -87,7 +87,11 @@ function useVoiceChat({ newConsumerCallback }) {
         (params) => {
           if (!device) return;
 
+          console.log('create-consumer-transport 콜백!!!!');
+
           const consumerTransport = device.createRecvTransport(params);
+
+          console.log(consumerTransport);
 
           consumerTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
             try {
