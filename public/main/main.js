@@ -21,9 +21,6 @@ function startup() {
     handle(ws, summoner);
   });
 
-  const version = app.getVersion();
-  console.log('버전', version);
-
   autoUpdater.checkForUpdates();
 }
 
