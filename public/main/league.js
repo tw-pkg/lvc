@@ -28,8 +28,9 @@ class League {
     this.summoner = null;
     this.inProgressed = false;
     this.#registerListener(credentials);
-    this.#initClient();
-    this.#handlePhase();
+    this.#initClient().then(() => {
+      this.#handlePhase();
+    })
   }
 
   #registerListener(credentials) {
@@ -40,8 +41,9 @@ class League {
       Credentials.init(newCredentials);
       this.ws = await createWebSocketConnection();
       this.inProgressed = false;
-      this.#initClient();
-      this.#handlePhase();
+      this.#initClient().then(() => {
+        this.#handlePhase();
+      })
     });
 
     client.on('disconnect', () => {
