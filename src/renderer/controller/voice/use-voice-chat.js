@@ -39,10 +39,11 @@ function useVoiceChat({ newConsumerCallback }) {
           try {
             socket.emit('transport-produce', { roomId, kind, rtpParameters },
               (producer) => {
+                callback({ id: producer.id });
+
                 if (producer.existProducer) {
                   getProducers();
                 }
-                callback({ id: producer.id });
               }
             );
           } catch (err) {
@@ -97,11 +98,11 @@ function useVoiceChat({ newConsumerCallback }) {
                 remoteProducerId,
               });
               callback();
-              connectRecvTransport(newSummonerPuuid, remoteProducerId, consumerTransport);
             } catch (err) {
               errback(err);
             }
           });
+          connectRecvTransport(newSummonerPuuid, remoteProducerId, consumerTransport);
         });
       // socket.on('complete-create-consumer-transport', (params) => {
       //   if (!device) return;
