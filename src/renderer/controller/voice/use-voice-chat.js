@@ -39,7 +39,7 @@ function useVoiceChat({ newConsumerCallback }) {
           try {
             socket.emit('transport-produce', { roomId, kind, rtpParameters },
               (producer) => {
-                if (producer.producersExist) {
+                if (producer.existProducer) {
                   getProducers();
                 }
                 callback({ id: producer.id });
