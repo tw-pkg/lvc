@@ -1,12 +1,8 @@
 import React from 'react';
 import { Container, Img, Nickname, Wrapper } from './style';
 import RankBadge from '../../../@common/rank-badge';
-import { useRecoilValue } from 'recoil';
-import { summonerState } from '../../../../@store/league';
 
-function SummonerProfile({ isOpenHistory, handleOpenHistory }) {
-  const summoner = useRecoilValue(summonerState);
-
+function SummonerProfile({ summoner, isOpenHistory, handleOpenHistory }) {
   return (
     summoner && (
       <Container $clicked={isOpenHistory} onClick={handleOpenHistory}>

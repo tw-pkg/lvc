@@ -3,7 +3,7 @@ import MessageInput from '../message-input';
 import Message from './message';
 import { Container, Messages } from './style';
 import { useRecoilValue } from 'recoil';
-import { createSocket } from '../../../utils/socket';
+import { connectChatSocket } from '../../../utils/socket';
 import { summonerState } from '../../../@store/league';
 import useScrollTopHandler from '../../../controller/@common/useScrollTopEventHandler';
 import Spinner from '../../@common/spinner';
@@ -30,7 +30,7 @@ function GlobalChatRoom() {
     });
 
   useEffect(() => {
-    const socket = createSocket('/global-chat');
+    const socket = connectChatSocket('/global-chat');
 
     socket.on('connect', () => {
       chatSocket.current = socket;
@@ -59,9 +59,7 @@ function GlobalChatRoom() {
     if (chatEvent === 'new-message') {
       const sender = messages[messages.length - 1].summoner;
       const isMine = sender.puuid === summoner?.puuid;
-      const isScrollEnd =
-        scrollRef.current.scrollTop + scrollRef.current.clientHeight >=
-        scrollRef.current.scrollHeight - 100;
+      const isScrollEnd = scrollRef.current.scrollHeight <= scrollRef.current.scrollTop + scrollRef.current.clientHeight + 200;
 
       if (isMine || isScrollEnd) {
         setTimeout(() => {

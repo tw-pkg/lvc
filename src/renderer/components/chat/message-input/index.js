@@ -12,6 +12,7 @@ function MessageInput({ handleSubmit, maxLength }) {
   function handleKeyDown(e) {
     if (e.code === 'Enter' && !e.shiftKey) {
       e.preventDefault();
+      if (text.trim() === '') return;
       if (isPressEnter) return setText('');
       handlePressEnter(e);
     }

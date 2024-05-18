@@ -8,7 +8,8 @@ const RECENT_PVP_MATCH_COUNT = 10;
 
 class History {
   constructor(data) {
-    this.matches = data.games.games.filter(match => match.gameType !== 'CUSTOM_GAME');
+    this.matches = data.games.games;
+    // this.matches = data.games.games.filter(match => match.gameType !== 'CUSTOM_GAME');
   }
 
   getStats() {

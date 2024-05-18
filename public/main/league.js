@@ -58,6 +58,7 @@ class League {
           profileImage: summoner.getProfileImage(),
           tier: summoner.getTier(),
         }
+
         IpcSender.send('on-league-client', client);
         clearInterval(interval);
       }
@@ -69,7 +70,7 @@ class League {
   }
 
   async subscribes() {
-    
+
   }
 }
 

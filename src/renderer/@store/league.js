@@ -10,3 +10,13 @@ export const summonerState = atom({
   key: 'summoner',
   default: null,
 });
+
+export const myTeamSummonersState = atom({
+  key: 'my-team-summoners',
+  default: null,
+});
+
+export const normalGameRoomIdState = atom({
+  key: 'normal-game-room-id',
+  default: null,
+})

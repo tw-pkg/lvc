@@ -7,22 +7,18 @@ import {
   RecentlyPlayList,
   Empty,
 } from './style';
-import { useRecoilValue } from 'recoil';
-import { summonerState } from '../../../../@store/league';
 import { PiWarningCircle } from 'react-icons/pi';
 
-function SummonerHistory() {
-  const summoner = useRecoilValue(summonerState);
-
+function SummonerHistory({ summoner }) {
   const [history, setHistory] = useState(null);
 
   useEffect(() => {
     if (!summoner) return;
 
-    window.ipcRenderer.invoke('summoner-history', summoner.puuid).then((history) => {
-      setHistory(history);
-    });
-  }, []);
+    window.ipcRenderer
+      .invoke('summoner-history', summoner.puuid)
+      .then((history) => setHistory(history));
+  }, [summoner]);
 
   if (!history) return <Fragment></Fragment>;
 

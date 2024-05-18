@@ -1,23 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container } from './style';
-import useLeague from '../../../controller/league/use-league';
 import Header from './header';
 import SummonerProfile from './summoner-profile';
 import SummonerHistory from './summoner-history';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { LNBState } from '../../../@store/ui';
+import { summonerState } from '../../../@store/league';
 
 function LNB() {
+  const [LNBStore, setLNBStore] = useRecoilState(LNBState);
+  const summoner = useRecoilValue(summonerState);
+
   const [isOpenHistory, setIsOpenHistory] = useState(false);
 
-  useLeague();
+  useEffect(() => {
+    setLNBStore((prev) => ({ ...prev, summoner }))
+  }, [summoner]);
+
+  useEffect(() => {
+    if (summoner && !LNBStore.summoner) {
+      setLNBStore((prev) => ({ ...prev, summoner }))
+    }
+    setIsOpenHistory(true);
+  }, [LNBStore.summoner]);
+
+  const handleOpenHistory = () => {
+    if (LNBStore.summoner?.puuid !== summoner.puuid) {
+      setLNBStore((prev) => ({ ...prev, summoner }));
+    };
+    setIsOpenHistory((prev) => !prev);
+  }
 
   return (
     <Container>
       <Header />
       <SummonerProfile
+        summoner={LNBStore.summoner}
         isOpenHistory={isOpenHistory}
-        handleOpenHistory={() => setIsOpenHistory((prev) => !prev)}
+        handleOpenHistory={handleOpenHistory}
       />
-      {isOpenHistory && <SummonerHistory />}
+      {isOpenHistory && <SummonerHistory summoner={LNBStore.summoner} />}
     </Container>
   );
 }
