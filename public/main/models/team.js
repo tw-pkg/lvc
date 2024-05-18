@@ -9,10 +9,6 @@ class Team {
     return team.map(Member.create);
   }
 
-  findMemberBy(puuid) {
-    return this.members.find(member => member.isSame(puuid));
-  }
-
   createVoiceRoomId() {
     return this.members.map(member => member.puuid).sort().join('').toString();
   }

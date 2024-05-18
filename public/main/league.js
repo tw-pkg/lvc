@@ -82,10 +82,7 @@ class League {
 
         const { teamOne } = gameData;
         const team = new Team(teamOne);
-        console.log('puuid: ', team.findMemberBy(this.summoner.puuid).puuid);
-        console.log('roomid: ', team.createVoiceRoomId());
         IpcSender.send('start-game', {
-          puuid: team.findMemberBy(this.summoner.puuid).puuid,
           roomId: team.createVoiceRoomId()
         });
       }
@@ -102,7 +99,6 @@ class League {
         const { teamOne } = gameData;
         const team = new Team(teamOne);
         IpcSender.send('start-game', {
-          puuid: team.findMemberBy(this.summoner.puuid).puuid,
           roomId: team.createVoiceRoomId()
         });
       }
