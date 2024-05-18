@@ -21,7 +21,13 @@ async function onLeagueClient() {
   ]);
 
   Credentials.init(credentials);
+  registerClientListener(credentials);
 
+  const summoner = await initClient();
+  return { ws, summoner };
+}
+
+function registerClientListener(credentials) {
   const client = new LeagueClient(credentials);
   client.start();
 
@@ -35,9 +41,6 @@ async function onLeagueClient() {
   client.on('disconnect', () => {
     IpcSender.send('close-client');
   });
-
-  const summoner = await initClient();
-  return { ws, summoner };
 }
 
 async function initClient() {
