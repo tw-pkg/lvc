@@ -81,27 +81,48 @@ function useVoiceChat({ newConsumerCallback }) {
     function signalNewConsumerTransport(remoteProducerId, newSummonerPuuid) {
       newConsumerCallback(newSummonerPuuid);
 
-      socket.emit('create-consumer-transport', { roomId, remoteProducerId });
-      socket.on('complete-create-consumer-transport', (params) => {
-        if (!device) return;
+      socket.emit('create-consumer-transport',
+        { roomId, remoteProducerId },
+        (params) => {
+          if (!device) return;
 
-        const consumerTransport = device.createRecvTransport(params);
+          const consumerTransport = device.createRecvTransport(params);
 
-        consumerTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
-          try {
-            socket.emit('transport-recv-connect', {
-              roomId,
-              dtlsParameters,
-              remoteProducerId,
-            });
-            callback();
-          } catch (err) {
-            errback(err);
-          }
+          consumerTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
+            try {
+              socket.emit('transport-recv-connect', {
+                roomId,
+                dtlsParameters,
+                remoteProducerId,
+              });
+              callback();
+            } catch (err) {
+              errback(err);
+            }
+          });
+
+          connectRecvTransport(newSummonerPuuid, remoteProducerId, consumerTransport);
         });
+      // socket.on('complete-create-consumer-transport', (params) => {
+      //   if (!device) return;
 
-        connectRecvTransport(newSummonerPuuid, remoteProducerId, consumerTransport);
-      });
+      //   const consumerTransport = device.createRecvTransport(params);
+
+      //   consumerTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
+      //     try {
+      //       socket.emit('transport-recv-connect', {
+      //         roomId,
+      //         dtlsParameters,
+      //         remoteProducerId,
+      //       });
+      //       callback();
+      //     } catch (err) {
+      //       errback(err);
+      //     }
+      //   });
+
+      //   connectRecvTransport(newSummonerPuuid, remoteProducerId, consumerTransport);
+      // });
     };
 
     function connectRecvTransport(newSummonerPuuid, remoteProducerId, consumerTransport) {
