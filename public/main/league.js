@@ -26,7 +26,7 @@ class League {
     Credentials.init(credentials);
     this.ws = ws;
     this.summoner = null;
-    this.gameStarted = false;
+    this.inProgressed = false;
     this.#registerListener(credentials);
     this.#initClient();
     this.#handlePhase();
@@ -101,6 +101,11 @@ class League {
         IpcSender.send('start-game', {
           roomId: team.createVoiceRoomId()
         });
+      }
+
+      if(phase === 'None' && this.inProgressed) {
+        this.inProgressed = false;
+        IpcSender.send('exit-in-game');
       }
     });
   }
