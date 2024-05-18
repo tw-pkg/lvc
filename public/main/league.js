@@ -39,7 +39,7 @@ class League {
     client.on('connect', async (newCredentials) => {
       Credentials.init(newCredentials);
       this.ws = await createWebSocketConnection();
-      this.gameStarted = false;
+      this.inProgressed = false;
       this.#initClient();
       this.#handlePhase();
     });
@@ -94,8 +94,8 @@ class League {
     this.ws.subscribe('/lol-gameflow/v1/session', async (data) => {
       const { phase, gameData } = data;
 
-      if (phase === 'InProgress' && !this.gameStarted) {
-        this.gameStarted = true;
+      if (phase === 'InProgress' && !this.inProgressed) {
+        this.inProgressed = true;
 
         const { teamOne } = gameData;
         const team = new Team(teamOne);
