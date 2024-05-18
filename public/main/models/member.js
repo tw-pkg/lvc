@@ -1,14 +1,27 @@
+const { Credentials } = require('../credentials');
+const { History } = require('./history');
+
 class Member {
-  static create(member) {
-    return new Member(member);
+  static create(data) {
+    return new Member(data);
   }
 
-  constructor(member) {
-    this.puuid = member.puuid;
+  constructor({ profileIconId, puuid, summonerName }) {
+    this.puuid = puuid;
+    this.profileIconId = profileIconId;
+    this.summonerName = summonerName;
   }
 
-  isSame(puuid) {
-    return this.puuid === puuid;
+  async getStats() {
+    const data = await Credentials.request(`/lol-match-history/v1/products/lol/${this.puuid}/matches`, 'GET')
+    const history = new History(data);
+
+    return {
+      puuid: this.puuid,
+      profileIconId: this.profileIconId,
+      summonerName: this.summonerName,
+      stats: history.getStats()
+    }
   }
 }
 

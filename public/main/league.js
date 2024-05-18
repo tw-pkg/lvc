@@ -74,23 +74,23 @@ class League {
   }
 
   async #handlePhase() {
-    this.ws.subscribe('/lol-gameflow/v1/session', (data) => {
-      const { phase, gameData } = data;
+    const { phase, gameData } = await Credentials.request('/lol-gameflow/v1/session', 'GET');
 
-      if(phase === 'InProgress' && !this.gameStarted) {
-        this.gameStarted = true;
+    if(phase && phase === 'InProgress') {
+      this.inProgressed = true;
 
-        const { teamOne } = gameData;
-        const team = new Team(teamOne);
-        IpcSender.send('start-game', {
-          roomId: team.createVoiceRoomId()
-        });
-      }
-    });
+      const { teamOne } = gameData;
+      const team = new Team(teamOne);
+
+      IpcSender.send('start-in-game', {
+        roomId: team.createVoiceRoomId(),
+        summoners: await team.getMemberStats()
+      });
+    }
   }
 
   async subscribes() {
-    this.ws.subscribe('/lol-gameflow/v1/session', (data) => {
+    this.ws.subscribe('/lol-gameflow/v1/session', async (data) => {
       const { phase, gameData } = data;
 
       if(phase === 'InProgress' && !this.gameStarted) {
@@ -98,8 +98,10 @@ class League {
 
         const { teamOne } = gameData;
         const team = new Team(teamOne);
-        IpcSender.send('start-game', {
-          roomId: team.createVoiceRoomId()
+
+        IpcSender.send('start-in-game', {
+          roomId: team.createVoiceRoomId(),
+          summoners: await team.getMemberStats()
         });
       }
 
