@@ -26,7 +26,7 @@ async function onLeagueClient() {
   client.start();
 
   client.on('connect', async (newCredentials) => {
-    Credentials.init(credentials);
+    Credentials.init(newCredentials);
     const ws = await createWebSocketConnection();
     const summoner = await initClient();
     handle(ws, summoner);
@@ -36,10 +36,8 @@ async function onLeagueClient() {
     IpcSender.send('close-client');
   });
 
-  return {
-    ws,
-    summoner: await initClient()
-  }
+  const summoner = await initClient();
+  return { ws, summoner };
 }
 
 async function initClient() {
