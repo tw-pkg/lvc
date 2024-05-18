@@ -44,6 +44,7 @@ class League {
     });
 
     client.on('disconnect', () => {
+      IpcSender.send('close-client');
     })
   }
 
