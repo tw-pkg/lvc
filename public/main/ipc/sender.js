@@ -10,6 +10,4 @@ class IpcSender {
   }
 }
 
-module.exports = {
-  IpcSender,
-};
+module.exports = IpcSender;

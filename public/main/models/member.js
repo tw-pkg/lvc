@@ -1,5 +1,5 @@
-const { Credentials } = require('../credentials');
-const { History } = require('./history');
+const Credentials = require('../credentials');
+const History = require('./history');
 
 class Member {
   static create(data) {

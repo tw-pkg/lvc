@@ -120,6 +120,4 @@ class History {
   }
 }
 
-module.exports = {
-  History,
-};
+module.exports = History;

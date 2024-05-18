@@ -1,9 +1,10 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('node:path');
 const { registerGlobalListeners } = require('./ipc/ipc');
-const { onLeagueClient, League } = require('./league');
-const { IpcSender } = require('./ipc/sender');
+const { onLeagueClient } = require('./league');
+const IpcSender = require('./ipc/sender');
 const { autoUpdater } = require("electron-updater");
+const { handle } = require('./handler');
 
 let mainWindow;
 
@@ -16,10 +17,8 @@ function startup() {
   IpcSender.init(webContents);
 
   webContents.on('did-finish-load', async () => {
-    onLeagueClient().then(([credentials, ws]) => {
-      const league = new League(credentials, ws);
-      league.subscribes();
-    });
+    const { ws, summoner} = await onLeagueClient();
+    handle(ws, summoner);
   });
 
   const version = app.getVersion();

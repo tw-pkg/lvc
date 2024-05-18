@@ -36,6 +36,4 @@ class Summoner {
   }
 }
 
-module.exports = {
-  Summoner,
-};
+module.exports = Summoner;

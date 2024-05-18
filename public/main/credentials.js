@@ -23,6 +23,4 @@ class Credentials {
   }
 }
 
-module.exports = {
-  Credentials
-}
+module.exports = Credentials;
