@@ -100,7 +100,7 @@ class League {
         const { teamOne } = gameData;
         const team = new Team(teamOne);
 
-        IpcSender.send('start-in-game', {
+        IpcSender.send('matched-normal-game', {
           roomId: team.createVoiceRoomId(),
           summoners: await team.getMemberStats()
         });

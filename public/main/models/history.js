@@ -108,6 +108,7 @@ class History {
         count: 1,
       };
       recentUsedChampions.set(champId, _data);
+      return;
     }
 
     data.count++;
