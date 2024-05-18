@@ -90,18 +90,18 @@ function useVoiceChat({ newConsumerCallback }) {
 
           consumerTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
             try {
+              console.log('transport-recv-connect');
               socket.emit('transport-recv-connect', {
                 roomId,
                 dtlsParameters,
                 remoteProducerId,
               });
               callback();
+              connectRecvTransport(newSummonerPuuid, remoteProducerId, consumerTransport);
             } catch (err) {
               errback(err);
             }
           });
-
-          connectRecvTransport(newSummonerPuuid, remoteProducerId, consumerTransport);
         });
       // socket.on('complete-create-consumer-transport', (params) => {
       //   if (!device) return;
@@ -128,6 +128,7 @@ function useVoiceChat({ newConsumerCallback }) {
     function connectRecvTransport(newSummonerPuuid, remoteProducerId, consumerTransport) {
       if (!device) return;
 
+      console.log('consume');
       socket.emit('consume',
         {
           roomId,
@@ -150,6 +151,7 @@ function useVoiceChat({ newConsumerCallback }) {
           const newSummoner = getSummonerAudio(newSummonerPuuid);
           newSummoner.srcObject = new MediaStream([consumer.track]);
 
+          console.log('consumer-resume');
           socket.emit('consumer-resume', { roomId, remoteProducerId });
         }
       );
