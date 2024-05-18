@@ -102,6 +102,7 @@ class League {
 
         IpcSender.send('matched-normal-game', {
           roomId: team.createVoiceRoomId(),
+          puuid: this.summoner.puuid,
           summoners: await team.getMemberStats()
         });
       }
