@@ -5,7 +5,8 @@ const {
 } = require('league-connect');
 const { Summoner } = require('./models/summoner');
 const { IpcSender } = require('./ipc/sender');
-const { Credentials } = require('./credentials')
+const { Credentials } = require('./credentials');
+const Team = require('./models/team');
  
 async function onLeagueClient() {
   return await Promise.all([
@@ -80,8 +81,13 @@ class League {
         this.gameStarted = true;
 
         const { teamOne } = gameData;
-        const { puuid } = teamOne.find(member => member.puuid === this.summoner.puuid);
-        IpcSender.send('start-game', puuid);
+        const team = new Team(teamOne);
+        console.log('puuid: ', team.findMemberBy(this.summoner.puuid).puuid);
+        console.log('roomid: ', team.createVoiceRoomId());
+        IpcSender.send('start-game', {
+          puuid: team.findMemberBy(this.summoner.puuid).puuid,
+          roomId: team.createVoiceRoomId()
+        });
       }
     });
   }
@@ -94,8 +100,11 @@ class League {
         this.gameStarted = true;
 
         const { teamOne } = gameData;
-        const { puuid } = teamOne.find(member => member.puuid === this.summoner.puuid);
-        IpcSender.send('start-game', puuid);
+        const team = new Team(teamOne);
+        IpcSender.send('start-game', {
+          puuid: team.findMemberBy(this.summoner.puuid).puuid,
+          roomId: team.createVoiceRoomId()
+        });
       }
     });
   }
