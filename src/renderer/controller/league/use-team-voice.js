@@ -80,11 +80,11 @@ function useTeamVoice() {
 
     function disconnectVoiceChat() {
       if (!isClosed) {
+        isClosed = true;
         setLeagueStatus('none');
         setMyTeamSummoners(null);
         disconnectAll();
         navigate(PATH.GLOBAL_CHAT);
-        isClosed = true;
       }
     };
   };
