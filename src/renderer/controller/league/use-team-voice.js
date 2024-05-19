@@ -2,6 +2,8 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { leagueStatusState, myTeamSummonersState, normalGameRoomIdState, summonerState } from '../../@store/league';
 import useVoiceChat from '../voice/use-voice-chat';
 import { connectMediaSocket } from '../../utils/socket';
+import { useNavigate } from 'react-router-dom';
+import { PATH } from '../../constants/path';
 
 function useTeamVoice() {
   const setLeagueStatus = useSetRecoilState(leagueStatusState);
@@ -10,6 +12,8 @@ function useTeamVoice() {
   const normalGameRoomId = useRecoilValue(normalGameRoomIdState);
 
   const { connect } = useVoiceChat({ newConsumerCallback: joinTeamSummoner });
+
+  const navigate = useNavigate();
 
   function joinTeamSummoner(puuid) {
     setMyTeamSummoners((prev) =>
@@ -76,10 +80,11 @@ function useTeamVoice() {
 
     function disconnectVoiceChat() {
       if (!isClosed) {
-        isClosed = true;
         setLeagueStatus('none');
         setMyTeamSummoners(null);
         disconnectAll();
+        navigate(PATH.GLOBAL_CHAT);
+        isClosed = true;
       }
     };
   };

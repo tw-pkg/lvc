@@ -13,8 +13,8 @@ function useVoiceChat({ newConsumerCallback }) {
     const { socket, stream, rtpCapabilities, roomId } = params;
 
     let device = new mediasoup.Device();
-    let producerTransport = null;
-    let consumerTransports = [];
+    let producer = null;
+    let consumers = [];
 
     device
       .load({ routerRtpCapabilities: rtpCapabilities })
@@ -25,9 +25,9 @@ function useVoiceChat({ newConsumerCallback }) {
       socket.emit('create-producer-transport', { roomId }, (params) => {
         if (!device) return;
 
-        producerTransport = device.createSendTransport(params);
+        producer = device.createSendTransport(params);
 
-        producerTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
+        producer.on('connect', ({ dtlsParameters }, callback, errback) => {
           try {
             socket.emit('transport-connect', { roomId, dtlsParameters });
             callback();
@@ -35,15 +35,12 @@ function useVoiceChat({ newConsumerCallback }) {
             errback(err);
           }
         });
-        producerTransport.on('produce', ({ kind, rtpParameters }, callback, errback) => {
+        producer.on('produce', ({ kind, rtpParameters }, callback, errback) => {
           try {
             socket.emit('transport-produce', { roomId, kind, rtpParameters },
               (producer) => {
                 callback({ id: producer.id });
-
-                if (producer.existProducer) {
-                  getProducers();
-                }
+                producer.existProducer && getProducers();
               }
             );
           } catch (err) {
@@ -56,9 +53,9 @@ function useVoiceChat({ newConsumerCallback }) {
     };
 
     async function connectSendTransport(audioTrack) {
-      if (!producerTransport || !audioTrack) return console.log('프로듀서 or 오디오 없음');
+      if (!producer || !audioTrack) return console.log('프로듀서 or 오디오 없음');
 
-      producerTransport
+      producer
         .produce({ track: audioTrack })
         .then((audioProducer) => {
           audioProducer.on('trackended', () => console.log('audio track ended'));
@@ -67,8 +64,8 @@ function useVoiceChat({ newConsumerCallback }) {
         .catch((err) => console.log('프로듀스 메서드 에러', err));
     };
 
-    socket.on('new-producer', (newProducer) => {
-      signalNewConsumerTransport(newProducer.id, newProducer.puuid);
+    socket.on('new-producer', (producer) => {
+      signalNewConsumerTransport(producer.id, producer.puuid);
     });
 
     function getProducers() {
@@ -87,15 +84,10 @@ function useVoiceChat({ newConsumerCallback }) {
         (params) => {
           if (!device) return;
 
-          console.log('create-consumer-transport 콜백!!!!');
-
           const consumerTransport = device.createRecvTransport(params);
-
-          console.log(consumerTransport);
 
           consumerTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
             try {
-              console.log('transport-recv-connect');
               socket.emit('transport-recv-connect', {
                 roomId,
                 dtlsParameters,
@@ -108,32 +100,11 @@ function useVoiceChat({ newConsumerCallback }) {
           });
           connectRecvTransport(newSummonerPuuid, remoteProducerId, consumerTransport);
         });
-      // socket.on('complete-create-consumer-transport', (params) => {
-      //   if (!device) return;
-
-      //   const consumerTransport = device.createRecvTransport(params);
-
-      //   consumerTransport.on('connect', ({ dtlsParameters }, callback, errback) => {
-      //     try {
-      //       socket.emit('transport-recv-connect', {
-      //         roomId,
-      //         dtlsParameters,
-      //         remoteProducerId,
-      //       });
-      //       callback();
-      //     } catch (err) {
-      //       errback(err);
-      //     }
-      //   });
-
-      //   connectRecvTransport(newSummonerPuuid, remoteProducerId, consumerTransport);
-      // });
     };
 
     function connectRecvTransport(newSummonerPuuid, remoteProducerId, consumerTransport) {
       if (!device) return;
 
-      console.log('consume');
       socket.emit('consume',
         {
           roomId,
@@ -145,7 +116,7 @@ function useVoiceChat({ newConsumerCallback }) {
 
           const consumer = await consumerTransport.consume(params);
 
-          consumerTransports.push({
+          consumers.push({
             puuid: newSummonerPuuid,
             remoteProducerId: remoteProducerId,
             remoteConsumerId: id,
@@ -156,14 +127,13 @@ function useVoiceChat({ newConsumerCallback }) {
           const newSummoner = getSummonerAudio(newSummonerPuuid);
           newSummoner.srcObject = new MediaStream([consumer.track]);
 
-          console.log('consumer-resume');
           socket.emit('consumer-resume', { roomId, remoteProducerId });
         }
       );
     };
 
     function closeConsumer(puuid) {
-      consumerTransports = consumerTransports
+      consumers = consumers
         .filter((summoner) => {
           if (summoner.puuid === puuid) {
             summoner.consumer.close();
@@ -179,20 +149,20 @@ function useVoiceChat({ newConsumerCallback }) {
       socket.disconnect();
 
       if (stream) {
-        producerTransport?.close();
-        producerTransport = null;
+        producer?.close();
+        producer = null;
         stream.getTracks().forEach((track) => track.stop());
         setUserStream(null);
       }
 
-      consumerTransports?.map(({ consumer, consumerTransport }) => {
+      consumers?.map(({ consumer, consumerTransport }) => {
         consumer.close();
         consumerTransport.close();
       });
-      consumerTransports = [];
+      consumers = [];
     };
 
-    return { closeConsumer, disconnectAll, producerTransport, consumerTransports };
+    return { closeConsumer, disconnectAll, producer, consumers };
   };
 
   return { connect };

@@ -40,7 +40,7 @@ function SummonerHistory({ summoner }) {
         <div id="info-category">
           <p id="name">모스트 챔피언</p>
           <div id="most-champ-list">
-            {history.mostChamps.map((champ, i) => (
+            {history.mostChamps?.map((champ, i) => (
               <img src={champ.icon} key={i} />
             ))}
           </div>
