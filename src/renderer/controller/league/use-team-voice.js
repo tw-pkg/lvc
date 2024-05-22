@@ -1,19 +1,34 @@
+import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { leagueStatusState, myTeamSummonersState, normalGameRoomIdState, summonerState } from '../../@store/league';
 import useVoiceChat from '../voice/use-voice-chat';
 import { connectMediaSocket } from '../../utils/socket';
-import { useNavigate } from 'react-router-dom';
 import { PATH } from '../../constants/path';
 
 function useTeamVoice() {
+  const normalGameRoomId = useRecoilValue(normalGameRoomIdState);
+
   const setLeagueStatus = useSetRecoilState(leagueStatusState);
   const summoner = useRecoilValue(summonerState);
   const setMyTeamSummoners = useSetRecoilState(myTeamSummonersState);
-  const normalGameRoomId = useRecoilValue(normalGameRoomIdState);
+
+  const voiceSocket = useRef();
 
   const { connect } = useVoiceChat({ newConsumerCallback: joinTeamSummoner });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const socket = connectMediaSocket('/team-voice-chat');
+
+    socket.on('connect', () => {
+      voiceSocket.current = socket;
+    });
+    socket.on('disconnect', () => {
+      voiceSocket.current = null;
+    });
+  }, []);
 
   function joinTeamSummoner(puuid) {
     setMyTeamSummoners((prev) =>
@@ -40,14 +55,12 @@ function useTeamVoice() {
     let disconnectAll;
     let closeConsumer;
 
-    const socket = connectMediaSocket('/team-voice-chat');
-
-    socket.emit(
+    voiceSocket.current.emit(
       'team-join-room',
       { roomId: normalGameRoomId, puuid: summoner.puuid },
       ({ rtpCapabilities }) => {
         const params = {
-          socket: socket,
+          socket: voiceSocket.current,
           stream: stream,
           rtpCapabilities: rtpCapabilities,
           roomId: normalGameRoomId,
@@ -60,7 +73,7 @@ function useTeamVoice() {
     );
 
     /* 팀원 나감 */
-    socket.on('inform-exit-in-game', ({ puuid }) => {
+    voiceSocket.current.on('inform-exit-in-game', ({ puuid }) => {
       closeConsumer(puuid);
       leaveTeamSummoner(puuid);
     });
@@ -80,6 +93,8 @@ function useTeamVoice() {
 
     function disconnectVoiceChat() {
       if (!isClosed) {
+        console.log('팀 보이스 나감');
+
         isClosed = true;
         setLeagueStatus('none');
         setMyTeamSummoners(null);
@@ -89,7 +104,7 @@ function useTeamVoice() {
     };
   };
 
-  return { joinRoom };
+  return { joinRoom, voiceSocket: voiceSocket.current };
 }
 
 export default useTeamVoice;

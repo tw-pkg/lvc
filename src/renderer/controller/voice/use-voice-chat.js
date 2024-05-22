@@ -1,10 +1,7 @@
 import * as mediasoup from 'mediasoup-client';
 import { useSetRecoilState } from 'recoil';
 import { userStreamState } from '../../@store/voice';
-
-function getSummonerAudio(summonerPuuid) {
-  return document.getElementById(summonerPuuid + 'audio');
-};
+import { getSummonerAudio } from '../../utils/voice';
 
 function useVoiceChat({ newConsumerCallback }) {
   const setUserStream = useSetRecoilState(userStreamState);

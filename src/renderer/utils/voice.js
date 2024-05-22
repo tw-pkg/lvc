@@ -30,12 +30,16 @@ export async function getUserStream(userDeviceId) {
   return userStream;
 };
 
+export function getSummonerAudio(puuid) {
+  return document.getElementById(puuid + 'audio');
+};
+
 export async function getConnectedAudioDevices(type) {
   const devices = await navigator.mediaDevices.enumerateDevices();
   return devices.filter((device) => device.kind === 'audio' + type);
 };
 
-export async function micVisualizer(stream, isMuted, setVolume) {
+export async function handleMicVisualizer(stream, isMuted, setVolume) {
   const audioContext = new AudioContext();
   const analyser = audioContext.createAnalyser();
   const microphone = audioContext.createMediaStreamSource(stream);

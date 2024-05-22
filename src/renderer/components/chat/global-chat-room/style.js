@@ -3,7 +3,7 @@ import { scroll } from '../../../style/scroll-style';
 
 export const Container = styled.div`
   position: relative;
-  width: calc(100vw - 300px);
+  width: 100%;
   height: calc(100vh - 80px);
   overflow-x: hidden;
   overflow-y: auto;

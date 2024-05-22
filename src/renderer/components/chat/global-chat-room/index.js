@@ -71,10 +71,12 @@ function GlobalChatRoom() {
 
   function handleRequestBeforeMessages() {
     if (!chatSocket.current) return;
+
     setPage((prev) => prev + 1);
     setIsLoadingBeforeMessages(true);
     chatSocket.current.emit('before-messages', { page: page + 1 });
   }
+
   function handleReceiveBeforeMessages({ isLast, messages }) {
     setChatEvent('before-messages');
     setIsLastPage(isLast);
@@ -86,6 +88,7 @@ function GlobalChatRoom() {
     setChatEvent('new-message');
     setMessages((prev) => [...prev, message]);
   }
+
   function handleSendMessage(text) {
     if (!chatSocket.current || !summoner) return;
     chatSocket.current.emit('new-message', { summoner, text });

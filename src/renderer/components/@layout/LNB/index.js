@@ -14,12 +14,12 @@ function LNB() {
   const [isOpenHistory, setIsOpenHistory] = useState(false);
 
   useEffect(() => {
-    setLNBStore((prev) => ({ ...prev, summoner }))
+    setLNBStore((prev) => ({ ...prev, summoner }));
   }, [summoner]);
 
   useEffect(() => {
     if (summoner && !LNBStore.summoner) {
-      setLNBStore((prev) => ({ ...prev, summoner }))
+      setLNBStore((prev) => ({ ...prev, summoner }));
     }
     setIsOpenHistory(true);
   }, [LNBStore.summoner]);
@@ -30,6 +30,8 @@ function LNB() {
     };
     setIsOpenHistory((prev) => !prev);
   }
+
+  if (!LNBStore.isShow) return;
 
   return (
     <Container>

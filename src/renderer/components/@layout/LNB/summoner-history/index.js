@@ -7,7 +7,6 @@ import {
   RecentlyPlayList,
   Empty,
 } from './style';
-import { PiWarningCircle } from 'react-icons/pi';
 
 function SummonerHistory({ summoner }) {
   const [history, setHistory] = useState(null);
@@ -78,7 +77,7 @@ function SummonerHistory({ summoner }) {
         </div>
         {!history.stats && (
           <Empty>
-            <PiWarningCircle />
+            {/* <PiWarningCircle /> */}
             <p>전적이 없습니다.</p>
           </Empty>
         )}
